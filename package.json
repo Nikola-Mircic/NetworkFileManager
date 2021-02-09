@@ -1,0 +1,17 @@
+{
+  "name": "networkfilemanager",
+  "version": "1.0.0",
+  "description": "\"Node.JS application for transporting files trought the home network\"",
+  "main": "server.js",
+  "scripts": {
+    "test": "start"
+  },
+  "author": "Nikola-Mircic",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "express-fileupload": "^1.2.1",
+    "morgan": "^1.10.0"
+  }
+}

@@ -1,0 +1,35 @@
+* {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    font-size: 100%;
+    vertical-align: baseline;
+    background: transparent;
+}
+
+body{
+	padding: 0;
+	margin: 0;
+	background-color: rgb(160, 160, 160);
+}
+
+#header {
+	display: block;
+	position: absolute;
+	background-image: linear-gradient(rgb(62, 65, 255), rgb(120,170,220), rgb(62, 65, 255));
+	width: 100%;
+	height: 70px;
+	position: sticky;
+	margin: 0;
+	float: unset;
+}
+
+#header h1{
+	color: black;
+	vertical-align: middle;
+	text-align: center;
+	font-size: 45px;
+	font-weight: 5px;
+	font-family: sans-serif;
+}
