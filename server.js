@@ -36,46 +36,42 @@ app.get("/",(req, res)=>{
 });
 
 app.post('/', (req, res) => {
-	var upload = req.files.file;
-	upload.forEach((file,idx)=>{
+	if(Array.isArray(req.files.file)){
+		var upload = req.files.file;
+		upload.forEach((file,idx)=>{
 		console.log(`Started saving file #${(idx+1)}...`);
-		let fileName = file.name;
-		let fileData = file.data;
-
-		fs.writeFile("./db/"+fileName,fileData,(err)=>{
-			if(err){
-				res.write("alert('Something went wrong!')");
-			}else{
-				console.log("File saved at : "+__dirname + "/db/"+fileName);
-			}
+		saveFile(file, req, res);
 		});
-
-		let time = Log.getTime();
-		console.log(`Saved file : ${fileName} [${time}]`);
-		console.log(fileData.toString());
-		Log.writeLog(fileName, "./db/"+fileName, requestIp.getClientIp(req), LOG_PATH, time, (result)=>{
-			if(result){
-				console.log("Transport logged");
-			}else{
-				console.log("Transport failed to log");
-			}
-		});
-	});
-
+	}else{
+		saveFile(req.files.file, req, res);
+	}
+	
     res.redirect('/');
 });
 
-function getTime(){
-		var date = new Date();
-		let time = date.getDate() + "/" +
-					(date.getMonth()+1) + "/" +
-					date.getFullYear() + ", " +
-					date.getHours() + ":" +
-					date.getMinutes() + ":" +
-					date.getSeconds();
+function saveFile(file, req, res){
+	let fileName = file.name;
+	let fileData = file.data;
 
-		return time;
-	};
+	fs.writeFile("./db/"+fileName,fileData,(err)=>{
+		if(err){
+			res.write("alert('Something went wrong!')");
+		}else{
+			console.log("File saved at : "+__dirname + "/db/"+fileName);
+		}
+	});
+
+	let time = Log.getTime();
+	console.log(`Saved file : ${fileName} [${time}]`);
+
+	Log.writeLog(fileName, "./db/"+fileName, requestIp.getClientIp(req), LOG_PATH, time, (result)=>{
+		if(result){
+			console.log("Transport logged");
+		}else{
+			console.log("Transport failed to log");
+		}
+	});
+}
 
 server.listen(PORT,IP,()=>{
 	console.log("Server started on http://"+IP+":"+PORT);
