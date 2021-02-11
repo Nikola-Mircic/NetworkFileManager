@@ -1,0 +1,1 @@
+nodemon -e js,css,html,json server.js

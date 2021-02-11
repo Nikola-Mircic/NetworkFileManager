@@ -6,11 +6,15 @@
 </head>
 <body>
 	<div id="header">
+		<div id="corner-left"></div>
+		<div id="corner-right"></div>
 		<h1 id="headerText">Local file network</h1>
 	</div>
-	<form method="post" enctype="multipart/form-data" action="/">
-		<input type="file" name="file" placeholder="Select file"/>
-		<input type="submit" name="submit">
-	</form>
+	<div>
+		<form method="post" enctype="multipart/form-data" action="/">
+			<input multiple type="file" name="file" placeholder="Select file"/>
+			<input type="submit" name="submit">
+		</form>
+	</div>
 </body>
 </html>
