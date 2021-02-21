@@ -6,15 +6,31 @@
 </head>
 <body>
 	<div id="header">
-		<div id="corner-left"></div>
-		<div id="corner-right"></div>
 		<h1 id="headerText">Local file network</h1>
 	</div>
-	<div>
-		<form method="post" enctype="multipart/form-data" action="/">
-			<input multiple type="file" name="file" placeholder="Select file"/>
-			<input type="submit" name="submit">
+	<div class="pageBlock" style="height: 80px;">
+		<div id="register">
+			<input type="text" name="userName" id="userName" placeholder=" Enter your Name/ID">
+			<button class="button" onclick="registerUser();">Register</button>
+		</div>
+	</div>
+	<div id="form" class="pageBlock">
+		<form id="form-data" method="post" enctype="multipart/form-data" action="/">
+			<input type="file" name="file" id="file" style="display: none;" multiple/>
+			<input type="button" value="Browse..." class="formFileInput" onclick="document.getElementById('file').click();" />
+			<input type="submit" name="submit" id="submit" class="formFileInput" value="Send to server">
 		</form>
 	</div>
+	<div id="selectedFiles" class="pageBlock" style="display: none">
+		<h6>Selected files: </h6>
+		<ol id="showFilesList"></ol>
+	</div>
+	<div class="pageBlock" id="users" style="display: none">
+		<h3>Send to:</h3>
+	</div>
+	<h3 id="data"></h3>
+	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+	<script type="text/javascript" src="./assets/js/jquery.min.js"></script>
+	<script type="text/javascript" src="./assets/js/main.js"></script>
 </body>
 </html>

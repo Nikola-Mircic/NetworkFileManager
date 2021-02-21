@@ -1,4 +1,5 @@
 const express = require('express');
+const socketIO = require('socket.io');
 
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
@@ -10,14 +11,16 @@ const fileUpload = require('express-fileupload');
 
 const app = express()
 const server = require('http').createServer(app);
+const io = socketIO(server, {});
 
-//start app 
 const PORT = process.env.PORT || 80;
-const IP = process.env.OPENSHIFT_NODEJS_IP || process.env.IP || '192.168.1.9';
+const IP = process.env.OPENSHIFT_NODEJS_IP || process.env.IP;
 
 const LogSystem = require("./logsystem.js");
 const Log = new LogSystem();
 const LOG_PATH = __dirname+"/db/logs/log_history.dat";
+
+var regUser = [];
 
 app.use(fileUpload({
     createParentPath: true
@@ -27,20 +30,26 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(morgan('dev'));
 app.use(requestIp.mw());
 
-app.use(express.static(path.join(__dirname,'client')));
+app.use('/assets',express.static(path.join(__dirname,'/client/assets')));
 
-app.get("/",(req, res)=>{
-	//var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-	console.log("USER CONNECTED!!!");
-	res.sendFile("/index.html");
-});
+app.get('/', function(req, res, next){
+	console.log(`Sending response to the user [${requestIp.getClientIp(req)}]...`);
+	res.sendFile(__dirname+'/client/index.html');
+})
 
-app.post('/', (req, res) => {
+app.get('/example/b', function (req, res, next) {
+  console.log('the response will be sent by the next function ...')
+  next()
+}, function (req, res) {
+  res.send('Hello from B!')
+})
+
+app.post('/', function(req, res){
 	if(Array.isArray(req.files.file)){
 		var upload = req.files.file;
 		upload.forEach((file,idx)=>{
-		console.log(`Started saving file #${(idx+1)}...`);
-		saveFile(file, req, res);
+			console.log(`Started saving file #${(idx+1)}...`);
+			saveFile(file, req, res);
 		});
 	}else{
 		saveFile(req.files.file, req, res);
@@ -71,8 +80,49 @@ function saveFile(file, req, res){
 			console.log("Transport failed to log");
 		}
 	});
-}
+};
 
 server.listen(PORT,IP,()=>{
 	console.log("Server started on http://"+IP+":"+PORT);
-})
+});
+
+io.on('connection', (socket)=>{
+	console.log('User connected');
+
+	(function(){
+		console.log("Sending data to new user");
+		regUser.forEach((item, index)=>{
+			socket.emit('newUser', item);
+		});
+	})();
+
+	socket.on('register',(data)=>{
+		var user = {
+			'name': data.name,
+			'id': socket.id
+		};
+
+		regUser[regUser.length] = user;
+		socket.broadcast.emit('newUser', user);
+	})
+
+	socket.on('data', (data)=>{
+		console.log(`[Server] Received data for : ${data.toName} [Sender: ${socket.id}]`);
+
+		//TRANSPORTING FILES...
+
+		io.to(data.to).emit('data',{
+			'from' : socket.id,
+			'data' : data.data
+		});
+	})
+
+	socket.on('disconnect', ()=>{
+		regUser = regUser.filter((value, idx, arr)=>{
+			return value.id != socket.id;
+		});
+		io.emit('removeUser', {
+			'id': socket.id
+		});
+	});
+});

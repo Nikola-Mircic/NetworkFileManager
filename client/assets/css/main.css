@@ -14,6 +14,10 @@ body{
 	background-color: rgb(230, 230, 230);
 }
 
+/*input[type="button"]:hover {
+	background-color: rgb(150,170,205);
+}*/
+
 #header {
 	display: block;
 	position: absolute;
@@ -29,16 +33,6 @@ body{
 	margin: 0 5% 15px 5%;
 }
 
-/*#header #corner-left{
-	position: relative;
-	display: inline;
-	background-image: linear-gradient(rgb(62, 65, 255), rgb(120,170,220), rgb(62, 65, 255));
-	width: 20%;
-	height: 100%;
-	border-radius: 0 0 0 15px;
-	margin-left: -5%;
-}*/
-
 #header h1{
 	color: white;
 	vertical-align: baseline;
@@ -47,4 +41,85 @@ body{
 	font-weight: 5px;
 	font-family: sans-serif;
 	margin-top: 15px;
+}
+
+.pageBlock {
+	padding: 0;
+	display: block;
+	position: relative;
+	background-color: rgb(150, 200, 255);
+	margin: 20px 10% 0px 10%;
+	border: 3px solid rgb(50, 50, 200);
+	width: 80%;
+	height: 150px;
+}
+
+#users h3 {
+	margin-left: 10%;
+	margin-top: 5px;
+	font-size: 150%
+}
+
+#users button{
+	display: inline-block;
+	position: relative;
+	margin: 10px 10% 10px 10%;
+	width: 80%;
+	height: 40px;
+	background-color: rgb(200,220,255);
+	border-radius: 10px;
+	font-size: 200%;
+}
+
+.formFileInput {
+	display: block;
+	position: relative;
+	width: 80%;
+	height: 50px;
+	margin: 15px 0px 10px 10%;
+	background-color: rgb(200,220,255);
+	font-size: 200%;
+}
+
+#register {
+	display: block;
+	position: relative;
+	margin: 15px 10% 15px 10%;
+	width: 80%;
+	height: 50px;
+	font-size: 200%;
+	vertical-align: baseline;
+}
+
+#register input {
+	display: inline;
+	position: absolute;
+	background-color: rgb(205, 205, 255);
+	border-radius: 10px;
+	margin: 0 0 0 0; 
+	width: 50%;
+	height: 50px;
+	vertical-align: baseline;
+	text-align: center;
+}
+
+#register button {
+	display: inline-block;
+	position: absolute;
+	background-color: rgb(200,220,255);
+	border-radius: 10px;
+	margin: 0 0 0 60%; 
+	width: 40%;
+	height: 50px;
+	vertical-align: baseline;
+	text-align: center;
+}
+
+#register button.button, #users button.button, input[type="button"], input[type="submit"].formFileInput {
+	transition-duration: 1s;
+  	cursor: pointer;
+}
+
+#register button.button:hover, #users button.button:hover, input[type="button"]:hover, input[type="submit"]:hover {
+	background-color: rgb(150,170,205);
 }
