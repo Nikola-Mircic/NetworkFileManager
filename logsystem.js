@@ -10,15 +10,16 @@ class LogSystem{
 					this.date.getFullYear() + ", " +
 					this.date.getHours() + ":" +
 					this.date.getMinutes() + ":" +
-					this.date.getSeconds();
+					this.date.getSeconds() + ":" +
+					this.date.getMilliseconds();
 
 		return time;
 	}
 
-	writeLog(fileName, filePath, clientIP, path, time, cb){
+	writeLog(fileName, filePath, clientIP, path, id, time, cb){
 		let fs = require('fs');
-		let logData = `Log from ${clientIP}: [${filePath}] [${fileName}] [${time}] \n`;
-		console.log("Writing logs for: \n \t"+
+		let logData = `Log [#${id}] from ${clientIP}: [${filePath}] [${fileName}] [${time}] \n`;
+		console.log("Writing logs [#"+id+"] for: \n \t"+
 						"- Clent : " + clientIP + "\n\t" +
 						"- File : " + fileName + "\n\t" +
 						"- In : " + filePath + "\n\t" +

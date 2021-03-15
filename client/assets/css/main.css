@@ -43,44 +43,6 @@ body{
 	margin-top: 15px;
 }
 
-.pageBlock {
-	padding: 0;
-	display: block;
-	position: relative;
-	background-color: rgb(150, 200, 255);
-	margin: 20px 10% 0px 10%;
-	border: 3px solid rgb(50, 50, 200);
-	width: 80%;
-	height: 150px;
-}
-
-#users h3 {
-	margin-left: 10%;
-	margin-top: 5px;
-	font-size: 150%
-}
-
-#users button{
-	display: inline-block;
-	position: relative;
-	margin: 10px 10% 10px 10%;
-	width: 80%;
-	height: 40px;
-	background-color: rgb(200,220,255);
-	border-radius: 10px;
-	font-size: 200%;
-}
-
-.formFileInput {
-	display: block;
-	position: relative;
-	width: 80%;
-	height: 50px;
-	margin: 15px 0px 10px 10%;
-	background-color: rgb(200,220,255);
-	font-size: 200%;
-}
-
 #register {
 	display: block;
 	position: relative;
@@ -109,6 +71,81 @@ body{
 	background-color: rgb(200,220,255);
 	border-radius: 10px;
 	margin: 0 0 0 60%; 
+	width: 40%;
+	height: 50px;
+	vertical-align: baseline;
+	text-align: center;
+}
+
+.formFileInput {
+	display: block;
+	position: relative;
+	width: 80%;
+	height: 50px;
+	margin: 15px 0px 10px 10%;
+	background-color: rgb(200,220,255);
+	font-size: 200%;
+}
+
+.pageBlock {
+	padding: 0;
+	display: block;
+	position: relative;
+	background-color: rgb(150, 200, 255);
+	margin: 20px 10% 0px 10%;
+	border: 3px solid rgb(50, 50, 200);
+	width: 80%;
+	min-height: 50px;
+}
+
+#selectedFiles h3{
+	margin: 15px 0 15px 15px;
+}
+
+#selectedFiles ol{
+	margin-left: 5%;
+}
+
+#selectedFiles ol li{
+	margin: 5px 0 5px 0;
+}
+
+#received h3{
+	margin: 15px 0 15px 15px;
+}
+
+#received ol{
+	margin-left: 5%;
+}
+
+#received ol li{
+	color: black;
+	margin: 5px 0 5px 0;
+}
+
+#users h3 {
+	margin-left: 10%;
+	margin-top: 5px;
+	font-size: 150%
+}
+
+#users button{
+	display: inline-block;
+	position: relative;
+	margin: 10px 10% 10px 10%;
+	width: 80%;
+	height: 40px;
+	background-color: rgb(200,220,255);
+	border-radius: 10px;
+	font-size: 200%;
+}
+
+.button{
+	display: block;
+	position: relative;
+	background-color: rgb(200,220,255);
+	border-radius: 10px;
+	margin: 15px 0 15px 15px; 
 	width: 40%;
 	height: 50px;
 	vertical-align: baseline;

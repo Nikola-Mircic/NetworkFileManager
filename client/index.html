@@ -21,16 +21,25 @@
 			<input type="submit" name="submit" id="submit" class="formFileInput" value="Send to server">
 		</form>
 	</div>
-	<div id="selectedFiles" class="pageBlock" style="display: none">
-		<h6>Selected files: </h6>
-		<ol id="showFilesList"></ol>
-	</div>
 	<div class="pageBlock" id="users" style="display: none">
 		<h3>Send to:</h3>
 	</div>
-	<h3 id="data"></h3>
+	<div id="selectedFiles" class="pageBlock" style="display: none">
+		<h3>Selected files: </h3>
+		<ol id="showFilesList"></ol>
+	</div>
+	<div class="pageBlock" id="received" style="display: none">
+		<h3>Received files:</h3>
+		<button class="button">Download all</button>
+		<h3 id="data">
+			<ol></ol>
+		</h3>
+	</div>
+	
 	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
 	<script type="text/javascript" src="./assets/js/jquery.min.js"></script>
+	<script type="text/javascript" src="./assets/js/jszip.min.js"></script>
+	<script type="text/javascript" src="./assets/js/FileSaver.min.js"></script>
 	<script type="text/javascript" src="./assets/js/main.js"></script>
 </body>
 </html>
