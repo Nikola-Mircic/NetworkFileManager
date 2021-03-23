@@ -160,3 +160,27 @@ body{
 #register button.button:hover, #users button.button:hover, input[type="button"]:hover, input[type="submit"]:hover {
 	background-color: rgb(150,170,205);
 }
+
+.progress {
+	display: none;
+	background-color: #a0e8de;
+	border-radius: 15px;
+	position: relative;
+	margin: 15px 30% 15px 30%;
+	height: 30px;
+	width: 40%;
+}
+
+.progress-done {
+	background: #0961ad;
+	box-shadow: 0 3px 3px -5px #04294a, 0 2px 5px #04294a;
+	border-radius: 15px;
+	color: #fff;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	width: 0;
+	opacity: 0;
+	transition: 0.5s linear;
+}

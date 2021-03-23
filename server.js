@@ -99,6 +99,10 @@ io.on('connection', (socket)=>{
 		socket.broadcast.emit('newUser', user);
 	});
 
+	socket.on("start-transfer",(data)=>{
+		io.to(data.receiver).emit("start-transfer",data);
+	})
+
 	socket.on('request data', (data) => { 
 		socket.to(data.from).emit('request data',data);
 	});
@@ -109,6 +113,7 @@ io.on('connection', (socket)=>{
 
 	socket.on("transfer end",(data)=>{
 		console.log(`Transfer [${data.from} -> ${data.receiver}] (${Log.getTime()}) completed!!`);
+		io.to(data.receiver).emit("transfer end",data);
 	});
 
 	socket.on('disconnect', ()=>{

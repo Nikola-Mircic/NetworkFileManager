@@ -4,6 +4,10 @@ var activeUsers = [];
 var receivedFiles = {};
 var selectedFiles = [];
 
+var sentSize = 0;
+var receivedSize = 0;
+var packageSize = 0;
+
 var struct = { 
     name: "", 
     type: "", 
@@ -27,7 +31,20 @@ socket.on('removeUser', function(data){
 	showUsers();
 });
 
+socket.on("start-transfer",function(data){
+	$(".progress").show();
+	receivedSize = 0;
+	packageSize = data.size;
+})
+
 socket.on('data',function(data){
+	receivedSize += data.file.data.byteLength;
+	let percent = Math.round((receivedSize*100)/packageSize);
+
+	$(".progress-done").css("width", percent+'%');
+	$(".progress-done").css("opacity", "1");
+	$(".progress-done").html(percent+'%'); 
+
 	if(!receivedFiles[data.file.name]){
 		receivedFiles[data.file.name] = Object.assign({}, struct, data.file);
 	}else{
@@ -75,12 +92,20 @@ socket.on('request data',function(data){
 
 	if(fileToSent == null){
 		socket.emit("transfer end",data);
+		setTimeout(function() {$(".progress").hide();}, 1000);
 		return;
 	}
 
 	var chunkEnd = Math.min(fileToSent.size, (fileToSent.chunks)*chunkSize);
 
 	var chunk = fileToSent.data.slice((fileToSent.chunks-1)*chunkSize, chunkEnd);
+
+	sentSize += chunk.byteLength;
+	let percent = Math.round((sentSize*100)/packageSize);
+
+	$(".progress-done").css("width", percent+'%');
+	$(".progress-done").css("opacity", "1");
+	$(".progress-done").html(percent+'%'); 
 
 	socket.emit('data',{
 		from: socket.id,
@@ -93,6 +118,10 @@ socket.on('request data',function(data){
 			data: chunk
 		}
 	});
+});
+
+socket.on("transfer end",function(data){
+	setTimeout(function() {$(".progress").hide();}, 1000);
 });
 
 async function sendToUser(name, id){
@@ -111,8 +140,18 @@ async function sendToUser(name, id){
 		selectedFiles.push(temp);
 	}
 
+	sentSize = 0;
+	packageSize = 0;
 	selectedFiles.forEach(function(item, idx){
+		packageSize += item.data.length;
 		console.log(item);
+	});
+
+	socket.emit("start-transfer",{
+		from: socket.id,
+		receiver: id,
+		receiverName: name,
+		size: packageSize
 	});
 
 	var chunk = -1;
@@ -135,6 +174,14 @@ async function sendToUser(name, id){
 			data: chunk
 		}
 	});
+
+	sentSize += chunk.byteLength;
+	let percent = Math.round((sentSize*100)/packageSize);
+
+	$(".progress").show();
+	$(".progress-done").css("width", percent+'%');
+	$(".progress-done").css("opacity", "1");
+	$(".progress-done").html(percent+'%'); 
 };
 
 $("#received button").on('click', function(e){
@@ -155,9 +202,6 @@ $("#received button").on('click', function(e){
     	zip.file(file.name, blob);
     	console.log(`Zipped : ${file.name}`);
     }
-    /*receivedFiles.forEach(function(file, idx){
-    	zip.file(file.name, file.data);
-    });*/
 	
 	zip.generateAsync({type:"blob"})
 		.then(function(content) {
