@@ -83,6 +83,7 @@ server.listen(PORT,IP,()=>{
 	console.log("Server started on http://"+IP+":"+PORT);
 });
 
+var startTime = 0;
 io.on('connection', (socket)=>{
 	console.log("Sending data to new user");
 	regUser.forEach((item, index)=>{
@@ -100,6 +101,8 @@ io.on('connection', (socket)=>{
 	});
 
 	socket.on("start-transfer",(data)=>{
+		var date = new Date();
+		startTime = date.getTime();
 		io.to(data.receiver).emit("start-transfer",data);
 	})
 
@@ -112,7 +115,8 @@ io.on('connection', (socket)=>{
 	});
 
 	socket.on("transfer end",(data)=>{
-		console.log(`Transfer [${data.from} -> ${data.receiver}] (${Log.getTime()}) completed!!`);
+		var date = new Date();
+		console.log(`Transfer [${data.from} -> ${data.receiver}] (${Log.getTime()})[~${date.getTime()-startTime} ms] completed!!`);
 		io.to(data.receiver).emit("transfer end",data);
 	});
 
