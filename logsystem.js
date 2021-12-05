@@ -1,6 +1,5 @@
 class LogSystem{
 	costructor(){
-		console.log("[LogSystem] Created new instance.");
 	}
 
 	getTime(){

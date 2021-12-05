@@ -23,7 +23,6 @@ var IP = "localhost";
 
 const LogSystem = require("./logsystem.js");
 const Log = new LogSystem();
-console.log(LogSystem);
 const LOG_PATH = __dirname+"/db/logs/log_history.dat";
 
 const userInCLI = readline.createInterface({
