@@ -9,18 +9,50 @@ const requestIp = require('request-ip');
 const path = require('path');
 const fs = require('fs');
 const fileUpload = require('express-fileupload');
+const readline = require("readline");
+
+const { networkInterfaces } = require('os');
 
 const app = express()
 const server = require('http').createServer(app);
 const io = socketIO(server, {});
 
 const PORT = process.env.PORT || 80;
-const IP = process.env.OPENSHIFT_NODEJS_IP || process.env.IP || "localhost";
+const available_adresses = getLocalAddress();
+var IP = "localhost";
 
 const LogSystem = require("./logsystem.js");
 const Log = new LogSystem();
 console.log(LogSystem);
 const LOG_PATH = __dirname+"/db/logs/log_history.dat";
+
+const userInCLI = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
+userInCLI.question("Select one of above networks to run your program on (to run only on your computer type 'localhost' ):", function(name) {
+    if(name === 'localhost') return;
+
+    let selection = available_adresses[name];
+
+    if(selection)
+    	IP = selection[0];
+    else{
+    	IP = "localhost";
+    	console.log(`Can't find network with name: ${name}`);
+    }
+
+    userInCLI.close();
+});
+
+userInCLI.on("close", function() {
+    console.log(`Ip address set to ${IP}`);
+
+    server.listen(PORT,IP,()=>{
+		console.log("Server started on http://"+IP+":"+PORT);
+	});
+});
 
 var regUser = [];
 
@@ -79,10 +111,6 @@ function saveFile(fileID, file, sender, transport){
 	});
 };
 
-server.listen(PORT,IP,()=>{
-	console.log("Server started on http://"+IP+":"+PORT);
-});
-
 var startTime = 0;
 io.on('connection', (socket)=>{
 	console.log("Sending data to new user");
@@ -129,3 +157,26 @@ io.on('connection', (socket)=>{
 		});
 	});
 });
+
+function getLocalAddress(){
+	const nets = networkInterfaces();
+	const results = Object.create(null); 
+
+	for (const name of Object.keys(nets)) {
+	    for (const net of nets[name]) {
+	        if (net.family === 'IPv4' && !net.internal) {
+	            if (!results[name]) {
+	                results[name] = [];
+	            }
+	            results[name].push(net.address);
+	        }
+	    }
+	}
+	console.log("Available networks:");
+	Object.keys(results).map((resultName)=>{
+		console.log(`  - ${resultName}`);
+	});
+
+	return results;
+}
+
