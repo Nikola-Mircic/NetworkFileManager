@@ -7,7 +7,7 @@ Application for sharing files between devices on a local network.
 
 <br>
 
-Table of content:
+## Table of content: ##
 - [Overview](#overview)
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
@@ -37,10 +37,19 @@ If you somehow didn't get the start.bat file or don't work, run the cmd window i
 > node server.js
 
 In both cases you should see something like:
-> <p style="color:aqua">[class LogSystem]</p>
-> Server started on http://localhost:80
+>Available networks: <br>
+>  \- Wi-Fi <br>
+>  \- Network 1 <br>
+>  \- Network 2 <br>
 
-In this message, NFM says that the system for writing transfer logs is working fine and the server is running. In the given URL, "localhost" represents the IPv4 address of your device on the network. For example, your IP is:  187.68.1.7, and the URL that other devices will use to connect to the server is http://187.68.1.7:80
+Then you will be asked to select one of those by typing the name of the network you prefer.
+If you want to run NFM on " localhost ", you can do that by simply typing `localhost` as an answer or just press ENTER button on your keyboard.
+
+After you finish that, server will start on selected network.
+
+> Server started on http://your_ip:80
+
+In this message, NFM says that the system for writing transfer logs is working fine and the server is running. In the given URL, " your_ip " represents the IPv4 address of your device on the network. For example, your IP is:  187.68.1.7, and the URL that other devices will use to connect to the server is http://187.68.1.7:80
 
 When the user connects to the server, you should see a message like:<br>
 > Sending response to the user [187.68.1.5]...<br>
