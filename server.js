@@ -90,13 +90,14 @@ function saveFile(fileID, file, sender, transport){
 
 	let filePath = `./db/${(transport)?"transport/":""}`; 
 
-	fs.writeFile(filePath+fileName,fileData,(err)=>{
-		if(err){
+	fs.appendFile(filePath+fileName, fileData,(err)=>{
+		if(err)
 			console.log("Something went wrong!");
-		}else{
-			console.log("File saved at : "+path.join(__dirname,filePath+fileName));
-		}
 	});
+};
+
+function saveLogData(fileID, file, sender){
+	let fileName = file.name;
 
 	let time = Log.getTime();
 	console.log(`Saved file : ${fileName} [${time}]`);
@@ -108,7 +109,7 @@ function saveFile(fileID, file, sender, transport){
 			console.log("Transport failed to log");
 		}
 	});
-};
+}
 
 var startTime = 0;
 io.on('connection', (socket)=>{
@@ -138,12 +139,21 @@ io.on('connection', (socket)=>{
 	});
 
 	socket.on('data', (data)=>{
+		saveFile(`${data.from}-${data.receiver}`,
+				 data.file,
+				 data.from,
+				 transport=true);
 		io.to(data.receiver).emit('data',data);
 	});
 
 	socket.on("transfer end",(data)=>{
 		var date = new Date();
+		saveLogData(`${data.from}-${data.receiver}`,
+					data.file,
+					data.from);
+
 		console.log(`Transfer [${data.from} -> ${data.receiver}] (${Log.getTime()})[~${date.getTime()-startTime} ms] completed!!`);
+
 		io.to(data.receiver).emit("transfer end",data);
 	});
 
