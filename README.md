@@ -1,6 +1,11 @@
-# Network file manager v1.0
+# Network file manager
 
 ### Author: [Nikola-Mircic](https://github.com/Nikola-Mircic)
+<br>
+
+![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/Nikola-Mircic/NetworkFileManager?label=Version&display_name=tag&include_prereleases)
+![GitHub repo size](https://img.shields.io/github/repo-size/Nikola-Mircic/NetworkFileManager?label=Download%20size&logo=git)
+![GitHub contributors](https://img.shields.io/github/contributors/Nikola-Mircic/NetworkFileManager?color=green&label=Contributors)
 
 <br>
 Application for sharing files between devices on a local network.
