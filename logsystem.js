@@ -1,5 +1,6 @@
 class LogSystem{
 	costructor(){
+		this.dateCreated = this.getTime();
 	}
 
 	getTime(){

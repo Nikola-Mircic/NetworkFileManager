@@ -75,6 +75,7 @@ socket.on('data',function(data){
 	socket.emit('request data',{
 		from: data.from,
 		receiver: socket.id,
+		file: data.file
 	})
 });
 
