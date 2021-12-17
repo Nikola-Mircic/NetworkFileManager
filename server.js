@@ -76,15 +76,17 @@ app.post('/', function(req, res){
 		upload.forEach((file,idx)=>{
 			console.log(`Started saving file #${(idx+1)}...`);
 			saveFile(idx, file, requestIp.getClientIp(req));
+			saveLogData(idx, file, requestIp.getClientIp(req));
 		});
 	}else{
 		saveFile(0, req.files.file, requestIp.getClientIp(req));
+		saveLogData(0, req.files.file, requestIp.getClientIp(req));
 	}
 	
     res.redirect('/');
 });
 
-function saveFile(fileID, file, sender, transport){
+function saveFile(fileID, file, sender, transport=false){
 	let fileName = file.name;
 	let fileData = file.data;
 
