@@ -5,13 +5,12 @@
     outline: 0;
     font-size: 100%;
     vertical-align: baseline;
-    background: transparent;
 }
 
 body{
-	padding: 15px 5% 0 5%;
+	padding: 0 5% 0 5%;
 	margin: 0;
-	background-color: rgb(230, 230, 230);
+	background-color: rgb(76, 162, 233);
 }
 
 /*input[type="button"]:hover {
@@ -19,62 +18,85 @@ body{
 }*/
 
 #header {
-	display: block;
-	position: absolute;
-	align-content: center;
-	background-image: linear-gradient(rgb(62, 65, 255), rgb(120,170,220), rgb(62, 65, 255));
-	border-radius: 15px 15px 15px 15px;
-	border-width: 5px;
+	display: flex;
+	justify-content: space-around;
+	flex-flow: column;
+	flex-wrap: wrap;
+	flex-direction: row;
+	align-items: center;
+	padding: 0.5rem 15px 0.5rem 15px;
+	background-color: rgba(126, 104, 250, 0.5);
+	border-radius: 15px;
+	border-width: 5px 10px 5px 10px;
 	border-style: solid; 
-	border-color: rgb(62, 65, 255) rgb(120,170,220) rgb(62, 65, 255) rgb(120,170,220);
-	width: 90%;
-	height: 70px;
-	position: sticky;
-	margin: 0 5% 15px 5%;
+	border-color: rgba(16, 14, 54, 0.9);
+	/*width: 90%;*/
+	min-width: 500px;
+	height: fit-content;
+	margin: 0 auto;
+}
+
+#headerContainer{
+	display: flex;
+	width:50%;
+	min-width: 400px;
+	text-align: center;
+}
+
+#header div{
+	vertical-align: middle;
 }
 
 #header h1{
-	color: white;
-	vertical-align: baseline;
-	text-align: center;
+	color: rgba(16, 14, 54, 0.9);
 	font-size: 45px;
 	font-weight: 5px;
 	font-family: sans-serif;
-	margin-top: 15px;
 }
 
 #register {
-	display: block;
+	display: flex;
 	position: relative;
-	margin: 15px 10% 15px 10%;
-	width: 80%;
-	height: 50px;
-	font-size: 200%;
-	vertical-align: baseline;
+	flex-wrap: wrap;
+	justify-content: center;
+	/*margin: 5px auto;*/
+	width: fit-content;
+	max-width: 50%;
+	min-width: 400px;
+	height: 35%;
+	font-size: 1.5rem;
 }
 
 #register input {
-	display: inline;
-	position: absolute;
-	background-color: rgb(205, 205, 255);
-	border-radius: 10px;
-	margin: 0 0 0 0; 
-	width: 50%;
-	height: 50px;
-	vertical-align: baseline;
+	display: flexbox;
+	margin: 5px auto;
+	background-color: rgba(205, 205, 255, 0.233);
+	border-bottom: 2px solid blue;
+	border-radius: 5%;
+	width: 60%;
+	min-width: 230px;
+	height: 90%;
 	text-align: center;
 }
 
 #register button {
-	display: inline-block;
-	position: absolute;
+	display: flexbox;
+	margin: auto;
 	background-color: rgb(200,220,255);
-	border-radius: 10px;
-	margin: 0 0 0 60%; 
-	width: 40%;
-	height: 50px;
-	vertical-align: baseline;
+	border-radius: 5%;
+	width: 35%;
+	min-width: 150px;
+	height: 90%;
 	text-align: center;
+}
+
+#register button:hover {
+	transition-duration: 0.2s;
+	color: rgb(67, 217, 255);
+	background-color: rgb(15, 53, 124);
+	border-radius: 5px;
+	padding: 5px;
+	/*font-size: 1.6rem;*/
 }
 
 .formFileInput {
@@ -148,7 +170,6 @@ body{
 	margin: 15px 0 15px 15px; 
 	width: 40%;
 	height: 50px;
-	vertical-align: baseline;
 	text-align: center;
 }
 
