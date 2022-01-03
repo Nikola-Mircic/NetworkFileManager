@@ -3,15 +3,21 @@
 <head>
 	<title>Home file transport</title>
 	<link rel="stylesheet" type="text/css" href="./assets/css/main.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
 	<div id="header">
 		<div id="headerContainer">
 			<h1 id="headerText">Local file network</h1>
 		</div>
-		<div id="register">
+		<div id="register" class="profileField">
 			<input type="text" name="userName" id="userName" placeholder=" Enter your Name/ID">
 			<button onclick="registerUser();">Register</button>
+		</div>
+
+		<div id="profile" class="profileField" style="display: none;">
+			<h3 name="profileName" id="profileName"></h3>
+			<button onclick="changeUser();">Change</button>
 		</div>
 	</div>
 	<div id="form" class="pageBlock">
