@@ -19,7 +19,10 @@ const chunkSize = 400000;
 
 socket.on('newUser',function(data){
 	$("users").show();
-	activeUsers[activeUsers.length] = data;
+	console.log(activeUsers);
+	if(activeUsers.map((user)=>user.id).indexOf(data.id) === -1)
+		activeUsers[activeUsers.length] = data;
+	console.log(activeUsers);
 	showUsers();
 });
 
@@ -211,10 +214,27 @@ $("#received button").on('click', function(e){
 });
 
 function registerUser(){
+	if(socket.disconnected)
+		socket.connect();
 	let name = $("#register input").val();
 	socket.emit('register',{
 		'name': name
 	});
+	$("#register").hide();
+
+	$("#profile").show();
+	$("#profile #profileName").text(name);
+};
+
+function changeUser(){
+	socket.disconnect();
+
+	let name = $("#register input").val();
+
+	$("#register").show();
+	$("#register input").val("");
+
+	$("#profile").hide();
 };
 
 function showUsers(){
@@ -223,6 +243,8 @@ function showUsers(){
 	}else{
 		$("#users").hide();
 	}
+
+	$("#users").empty();
 
 	if(activeUsers.length > 2){
 		$("users").css("height", `${(150+(activeUsers.length-2)*60)}px`);
