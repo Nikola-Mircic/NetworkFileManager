@@ -52,7 +52,7 @@ body{
 #header h1{
 	color: rgba(16, 14, 54);
 	background-color: #eeeeee55;
-	font-size: 45px;
+	font-size: 42px;
 	font-weight: 5px;
 	font-family: 'Times New Roman', Times, serif;
 	border: 2px solid #202020;
@@ -103,21 +103,69 @@ body{
 .profileField button {
 	display: flexbox;
 	margin: auto;
-	background-color: rgb(200,220,255);
 	border-radius: 5%;
 	width: 35%;
 	min-width: 150px;
 	height: 90%;
+}
+
+button{
+	color: black;
+	background-color: rgb(200,220,255);
 	text-align: center;
 }
 
-.profileField button:hover {
+button:hover {
 	transition-duration: 0.2s;
 	color: rgb(67, 217, 255);
 	background-color: rgb(15, 53, 124);
-	border-radius: 5px;
 	padding: 5px;
 	/*font-size: 1.6rem;*/
+}
+
+.nav{
+	display: flex;
+	width: 100%;
+	align-items: center;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+
+.nav li{
+	display: block;
+	width: calc(100%/3);
+	list-style: none;
+	height: fit-content;
+	margin: auto;
+}
+
+.nav li button{
+	display: block;
+	border-width: 0 1px 3px 1px;
+	border-style: solid;
+	border-color:  rgba(16, 14, 54, 0.9);
+	width: 100%;
+	min-width: 200px;
+	font-size: 1.5rem;
+	height: 2.3rem;
+}
+
+.nav li button[active]{
+	transition-duration: 0.2s;
+	color: rgb(67, 217, 255);
+	background-color: rgb(15, 53, 124);
+	padding: 5px;
+}
+
+@media screen and (max-width:600px){
+	.nav li{
+		width: 100%;
+		min-width: 100%;
+	}
+
+	.nav li button{
+		height: 3.2rem;
+	}
 }
 
 .formFileInput {
