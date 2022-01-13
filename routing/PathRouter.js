@@ -25,6 +25,16 @@ const PathRouter = function(saveFile, saveLogData, rootPath){
         console.log(`Sending response to the user [${requestIp.getClientIp(req)}]...`);
         res.sendFile(rootPath+'/client/index.html');
     });
+
+    app.get('/received', function(req, res, next){
+        console.log(`Sending response to the user [${requestIp.getClientIp(req)}]...`);
+        res.sendFile(rootPath+'/client/received.html');
+    });
+
+    app.get('/sent', function(req, res, next){
+        console.log(`Sending response to the user [${requestIp.getClientIp(req)}]...`);
+        res.sendFile(rootPath+'/client/sent.html');
+    });
     
     app.post('/', function(req, res){
         if(Array.isArray(req.files.file)){

@@ -25,25 +25,8 @@
 		<li><a href="/received"><button>Received</button></a></li>
 		<li><a href="/sent"><button>Sent</button></a></li>
 	</nav>
-	<div id="form" class="pageBlock">
-		<form id="form-data" method="post" enctype="multipart/form-data" action="/">
-			<input type="file" name="file" id="file" style="display: none;" multiple/>
-			<input type="button" value="Browse..." class="formFileInput" onclick="document.getElementById('file').click();" />
-			<input type="submit" name="submit" id="submit" class="formFileInput" value="Send to server">
-		</form>
-	</div>
-	<div class="pageBlock" id="users" style="display: none">
-		<h3>Send to:</h3>
-	</div>
-	<div class="progress">
-		<div class="progress-done" data-done="0">
-		</div>
-	</div>
-	<div id="selectedFiles" class="pageBlock" style="display: none">
-		<h3>Selected files: </h3>
-		<ol id="showFilesList"></ol>
-	</div>
-	<div class="pageBlock" id="received" style="display: none">
+	
+	<div class="pageBlock" id="received">
 		<h3>Received files:</h3>
 		<button class="button">Download all</button>
 		<h3 id="data">
