@@ -135,8 +135,12 @@ button:hover {
 	display: block;
 	width: calc(100%/3);
 	list-style: none;
-	height: fit-content;
+	height: 2.3rem;
 	margin: auto;
+}
+
+.nav li a{
+	text-decoration: none;
 }
 
 .nav li button{
@@ -147,24 +151,36 @@ button:hover {
 	width: 100%;
 	min-width: 200px;
 	font-size: 1.5rem;
-	height: 2.3rem;
+}
+
+.nav li button:hover{
+	margin-top: -10px;
+	border-width: 2px 1px 2px 1px;
+	border-style: solid;
+	border-color:  rgba(16, 14, 54, 0.9);
 }
 
 .nav li button[active]{
 	transition-duration: 0.2s;
 	color: rgb(67, 217, 255);
 	background-color: rgb(15, 53, 124);
-	padding: 5px;
 }
+
 
 @media screen and (max-width:600px){
 	.nav li{
 		width: 100%;
 		min-width: 100%;
+		height: fit-content;
 	}
 
 	.nav li button{
 		height: 3.2rem;
+	}
+
+	.nav li button:hover{
+		margin-top: 0;
+		border-width: 0;
 	}
 }
 
