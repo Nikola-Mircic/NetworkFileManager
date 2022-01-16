@@ -224,6 +224,8 @@ function registerUser(){
 
 	$("#profile").show();
 	$("#profile #profileName").text(name);
+
+	updateUser(name);
 };
 
 function changeUser(){
@@ -236,6 +238,22 @@ function changeUser(){
 
 	$("#profile").hide();
 };
+
+function updateUser(username){
+	if(!window.sessionStorage.getItem("username") || window.sessionStorage.getItem("username")===undefined)
+		window.sessionStorage.setItem("username", username);
+	else{
+		$("#register").hide();
+		$("#profile").show();
+	}
+	if(!username)
+		$("#profileName").html("");
+	else
+		$("#profileName").html(username);
+	window.sessionStorage.setItem("username", username);
+}
+
+updateUser(window.sessionStorage.getItem("username"));
 
 function showUsers(){
 	if(activeUsers.length > 0){
