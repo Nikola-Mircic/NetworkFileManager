@@ -4,6 +4,7 @@
   "description": "\"Node.JS application for transporting files trought the home network\"",
   "main": "server.js",
   "scripts": {
+    "start": "nodemon server.js -default-addr-name Wi-Fi",
     "test": "start"
   },
   "author": "Nikola-Mircic",
