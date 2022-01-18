@@ -240,7 +240,8 @@ function changeUser(){
 };
 
 function updateUser(username){
-	if(!window.sessionStorage.getItem("username") || window.sessionStorage.getItem("username")===undefined)
+	console.log(typeof(username), username);
+	if(!window.sessionStorage.getItem("username") || sessionStorage.getItem("username")=='null')
 		window.sessionStorage.setItem("username", username);
 	else{
 		$("#register").hide();
@@ -276,33 +277,6 @@ function showUsers(){
 
 	$("#users").html(data);
 }
-
-var filesListDiv = $("#selectedFiles");
-$('#file').on('input', function (e) {
-   	var files = e.target.files;
-   	let list = $("#showFilesList");
-
-   	if(files === null){
-   		console.log('input was null...');
-   		return;
-   	}
-
-   	filesListDiv.show();
-
-   	var data = "";
-   	console.log("Loading files...");
-   	for (var i = 0; i < files.length; ++i) {
-		var name = files.item(i).name;
-   		data += `<li>${name}</li>\n`;
-	}
-   	list.html(data);
-});
-
-$("#submit").on('click', function(e){
-	if(activeUsers.length > 0){
-		e.preventDefault();
-	}
-});
 
 function extractFileName(fullPath){
 	if (fullPath) {

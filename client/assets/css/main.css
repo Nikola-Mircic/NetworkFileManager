@@ -1,6 +1,5 @@
 * {
     margin: 0;
-    padding: 0;
     border: 0;
     outline: 0;
     font-size: 100%;
@@ -8,7 +7,6 @@
 }
 
 body{
-	margin: 0;
 	background-color: rgb(76, 162, 233);
 	width: 100%;
 	min-width: fit-content;
@@ -79,7 +77,6 @@ body{
 	display: flexbox;
 	margin: auto;
 	background-color: rgba(255, 255, 255, 0.438);
-	border-bottom: 2px solid blue;
 	border-radius: 5%;
 	width: 60%;
 	min-width: 230px;

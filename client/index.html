@@ -3,6 +3,7 @@
 <head>
 	<title>Network file manager</title>
 	<link rel="stylesheet" type="text/css" href="./assets/css/main.css">
+	<link rel="stylesheet" type="text/css" href="./assets/css/index.css">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
@@ -25,6 +26,21 @@
 		<li><a href="/received"><button>Received</button></a></li>
 		<li><a href="/sent"><button>Sent</button></a></li>
 	</nav>
+
+	<div id="workspace">
+		<div id="dropField" ondrop="onFileDrop(event);" ondragover="onDragOver(event);">
+			<div id="dropHints">
+				<p>Select files and folders by dragging them here or by clicking button below...</p>
+				<input type="file" name="file" id="file" style="display: none;" multiple webkitdirectory mozdirectory />
+				<button onclick="document.getElementById('file').click();">Select files</button>
+			</div>
+		</div>
+		<div>
+			<ul id="selectedFiles">
+
+			</ul>
+		</div>
+	</div>
 	
 	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
 	<script type="text/javascript" src="./assets/js/jquery.min.js"></script>
