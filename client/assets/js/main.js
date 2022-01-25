@@ -28,7 +28,7 @@ var FileStruct = {
 
 // Template for storing files and directories
 const DirectoryStruct = {
-    directories:[], //List of directories in a parent directory
+    directories:{}, //List of directories in a parent directory
     files:[], // List of files in a directory
 	path: "",
 };

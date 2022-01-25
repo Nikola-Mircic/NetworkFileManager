@@ -1,6 +1,4 @@
-
 var filesListDiv = $("#selectedFiles");
-var stored = {};
 
 function onFileDrop(event){
     event.preventDefault();
@@ -8,28 +6,23 @@ function onFileDrop(event){
     var items = event.dataTransfer.items; 
     for(let i=0; i<items.length; ++i){
         let item = items[i].webkitGetAsEntry();
-        stored = JSON.parse(window.sessionStorage.getItem("files"));
 
         appendFileEntryToList(filesListDiv, item);
-        loadFileData(item, stored)
-            .then((loaded)=>{
-                console.log(loaded);
-                console.log(JSON.parse(JSON.stringify(loaded)));
-                window.sessionStorage.setItem("files", JSON.stringify(loaded));
-                console.log("SessionStorage updated");
-                console.log(JSON.parse(window.sessionStorage.getItem("files")));
+        loadFileData(item, userRootDir)
+            .then((success)=>{
+                if(!success) console.log("Error loading item");
             });
     }
 }
 
-function appendFileEntryToList(list, file){
-    if(file.isFile){
-        list.append(`<li>${file.name}</li>`);
-    }else if(file.isDirectory){
-        list.append(`<li>${file.name}:</li>`);
+function appendFileEntryToList(list, fileEntry){
+    if(fileEntry.isFile){
+        list.append(`<li>${fileEntry.name}</li>`);
+    }else if(fileEntry.isDirectory){
+        list.append(`<li>${fileEntry.name}:</li>`);
         var dirList = $("<ul></ul>");
 
-        var reader = file.createReader();
+        var reader = fileEntry.createReader();
         reader.readEntries((entries)=>{
             for (var i = 0; i < entries.length; i++) {
                 appendFileEntryToList(dirList, entries[i]);
@@ -44,13 +37,13 @@ function loadFileData(entry, directory){
     return new Promise((resolve, reject)=>{
         function handleEntry(entry, directory){
             if(entry.isFile){
-                entry.file(function(sample){
+                entry.file(async function(sample){
                     let temp = Object.assign({}, FileStruct);
         
                     temp.name = sample.name;
                     temp.type = sample.type;
                     temp.size = sample.size;
-                    temp.data = new Uint8Array(sample.arrayBuffer());
+                    temp.data = new Uint8Array(await sample.arrayBuffer());
                     temp.isFile = true;
                     temp.path = entry.fullPath;
         
@@ -58,7 +51,7 @@ function loadFileData(entry, directory){
                 });
             }else if(entry.isDirectory){
                 var temp = Object.assign({}, DirectoryStruct);
-                temp.directories = [];
+                temp.directories = {};
                 temp.path = entry.fullPath;
         
                 var reader = entry.createReader();
@@ -68,14 +61,13 @@ function loadFileData(entry, directory){
                     }
                 });
         
-                directory.directories = [...(directory.directories || []),temp];
+                directory.directories[entry.name] = temp;
             }
         }
         handleEntry(entry, directory);
 
-        resolve(directory);
+        resolve(true);
     });
-    
 }
 
 function onDragOver(event){
@@ -84,36 +76,23 @@ function onDragOver(event){
     event.dataTransfer.dropEffect = 'copy'
 }
 
-$('#file').on('input', function (e) {
-   	var files = e.target.files;
+async function onInput(e){
+    var files = e.target.files;
     for(let i=0;i<files.length;++i){
-        appendFileEntryToList(filesListDiv, files[i]);
+        filesListDiv.append(`<li>${files[i].name}</li>`);
+
+        let temp = Object.assign({}, FileStruct);
+        
+        temp.name = files[i].name;
+        temp.type = files[i].type;
+        temp.size = files[i].size;
+        temp.data = new Uint8Array(await files[i].arrayBuffer());
+        temp.isFile = true;
+        temp.path = "";
+
+        userRootDir.files=[...(userRootDir.files || []),temp];
     }
-   	/*let list = $("#showFilesList");
+}
 
-   	if(files === null){
-   		console.log('input was null...');
-   		return;
-   	}
+$('#file').on('input',onInput);
 
-   	filesListDiv.show();
-
-   	var data = "";
-   	console.log("Loading files...");
-   	for (var i = 0; i < files.length; ++i) {
-		var name = files.item(i).name;
-   		data += `<li>${name}</li>\n`;
-	}
-   	list.html(data);*/
-});
-
-/*"{
-    "directories":{
-        "assets":{
-            "directories":{},
-            "files":[],
-            "path":"/assets"}
-        },
-        "files":[],
-        "path":""
-    }" */
