@@ -1,4 +1,4 @@
-const socket = io();
+"use strict";
 
 var activeUsers = [];
 var receivedFiles = {};
@@ -8,14 +8,58 @@ var sentSize = 0;
 var receivedSize = 0;
 var packageSize = 0;
 
-var struct = { 
-    name: "", 
-    type: "", 
-    size: 0, 
-    data: null, 
-    chunks: 0, 
+//Posible states of a file
+const WAITING = 0;
+const SENDING = 1;
+const SENT = 2;
+const RECEIVING = 3;
+const RECEIVED = 4;
+
+var FileStruct = { 
+    name: "", //Name of a file
+    type: "", //Type of a file
+    size: 0, //Size of a file
+    data: null, //Data from file
+    chunks: 0, //Chunks of data sent/received
+	state: WAITING, //Current state of a file. WAITING means that file is loaded and not sent yet
+	isFile: false, //true - it's a file, false - it's a directory
+	path: "", // Path to the file
 };
+
+// Template for storing files and directories
+const DirectoryStruct = {
+    directories:{}, //List of directories in a parent directory
+    files:[], // List of files in a directory
+	path: "",
+};
+
+var userRootDir =  Object.assign({}, DirectoryStruct); // Directory where users files and directories are stored
+
+window.sessionStorage.setItem("files", JSON.stringify(userRootDir));
+
 const chunkSize = 400000;
+
+function redirect(path){
+	console.log(window.location);
+	fetch(window.location.origin+path).then((data)=>{
+		data.text().then((page)=>{
+					console.log(path);
+					$("#pageScript").remove();
+					$("head").append(getPageSpecificScripts(page));
+					$("body").html(getBody(page));
+				});
+	});
+}
+
+function getPageSpecificScripts(page){
+	const commnet = "<!-- PAGE SPECIFIC SCRIPTS-->";
+	const commentIndex = page.indexOf(commnet)+commnet.length;
+	return page.substring(commentIndex, page.indexOf("</body>"));
+}
+
+function getBody(page){
+	return page.substring(page.indexOf("<body>"),page.indexOf("</body>"));
+}
 
 socket.on('newUser',function(data){
 	$("users").show();
@@ -49,7 +93,7 @@ socket.on('data',function(data){
 	$(".progress-done").html(percent+'%'); 
 
 	if(!receivedFiles[data.file.name]){
-		receivedFiles[data.file.name] = Object.assign({}, struct, data.file);
+		receivedFiles[data.file.name] = Object.assign({}, FileStruct, data.file);
 	}else{
 		var concat = new Uint8Array(receivedFiles[data.file.name].data.byteLength + data.file.data.byteLength);
 		concat.set(new Uint8Array(receivedFiles[data.file.name].data));
@@ -135,7 +179,7 @@ async function sendToUser(name, id){
 
 	for(let i=0;i<files.length;++i){
 		console.log("Processing "+i+"...");
-		let temp = Object.assign({},struct);
+		let temp = Object.assign({},FileStruct);
 		temp.name = files[i].name;
 		temp.type = files[i].type;
 		temp.size = files[i].size;
@@ -240,7 +284,7 @@ function changeUser(){
 };
 
 function updateUser(username){
-	if(!window.sessionStorage.getItem("username") || window.sessionStorage.getItem("username")===undefined)
+	if(!window.sessionStorage.getItem("username") || sessionStorage.getItem("username")=='null')
 		window.sessionStorage.setItem("username", username);
 	else{
 		$("#register").hide();
@@ -276,33 +320,6 @@ function showUsers(){
 
 	$("#users").html(data);
 }
-
-var filesListDiv = $("#selectedFiles");
-$('#file').on('input', function (e) {
-   	var files = e.target.files;
-   	let list = $("#showFilesList");
-
-   	if(files === null){
-   		console.log('input was null...');
-   		return;
-   	}
-
-   	filesListDiv.show();
-
-   	var data = "";
-   	console.log("Loading files...");
-   	for (var i = 0; i < files.length; ++i) {
-		var name = files.item(i).name;
-   		data += `<li>${name}</li>\n`;
-	}
-   	list.html(data);
-});
-
-$("#submit").on('click', function(e){
-	if(activeUsers.length > 0){
-		e.preventDefault();
-	}
-});
 
 function extractFileName(fullPath){
 	if (fullPath) {
