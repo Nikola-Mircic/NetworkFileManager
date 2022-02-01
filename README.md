@@ -33,7 +33,7 @@ To use this application you need to have:
 If you don't have Node.js installed, you can download it on [Node.js download page](https://nodejs.org/en/download/).
 
 ## Installation
-To install this application on your computer, click [here](https://github.com/Nikola-Mircic/NetworkFileManager/archive/refs/heads/master.zip) and you will get a file called "NetworkFileManager-master.zip". After that, just extract all of its content to the empty folder and start the application.
+To install this application on your computer, click [here](https://github.com/Nikola-Mircic/NetworkFileManager/archive/refs/tags/v1.0-alpha.zip) and you will get a file called "NetworkFileManager-1.0-alpha.zip". After that, just extract all of its content to the empty folder and start the application.
 
 ## How to use
 If you have a **start.bat** file in your folder, use it to run your application. If it closes after you opened it, check your <u>firewall settings and network connections</u>.
