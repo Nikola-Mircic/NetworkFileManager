@@ -42,4 +42,17 @@
     transform: translateX(-50%);
 }
 
+#selectedFiles{
+    font-size:150%;
+}
+
+#selectedFiles li{
+    padding-left: 0.5em;
+    list-style: none;
+}
+
+#selectedFiles li:hover{
+    background-color: rgba(0, 0, 255, 0.438);
+}
+
 

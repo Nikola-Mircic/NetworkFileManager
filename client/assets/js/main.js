@@ -1,4 +1,4 @@
-const socket = io();
+"use strict";
 
 var activeUsers = [];
 var receivedFiles = {};
@@ -13,7 +13,7 @@ const WAITING = 0;
 const SENDING = 1;
 const SENT = 2;
 const RECEIVING = 3;
-const RECEIVED = 5;
+const RECEIVED = 4;
 
 var FileStruct = { 
     name: "", //Name of a file
@@ -39,7 +39,27 @@ window.sessionStorage.setItem("files", JSON.stringify(userRootDir));
 
 const chunkSize = 400000;
 
-var test = FileStruct;
+function redirect(path){
+	console.log(window.location);
+	fetch(window.location.origin+path).then((data)=>{
+		data.text().then((page)=>{
+					console.log(path);
+					$("#pageScript").remove();
+					$("head").append(getPageSpecificScripts(page));
+					$("body").html(getBody(page));
+				});
+	});
+}
+
+function getPageSpecificScripts(page){
+	const commnet = "<!-- PAGE SPECIFIC SCRIPTS-->";
+	const commentIndex = page.indexOf(commnet)+commnet.length;
+	return page.substring(commentIndex, page.indexOf("</body>"));
+}
+
+function getBody(page){
+	return page.substring(page.indexOf("<body>"),page.indexOf("</body>"));
+}
 
 socket.on('newUser',function(data){
 	$("users").show();
@@ -264,7 +284,6 @@ function changeUser(){
 };
 
 function updateUser(username){
-	console.log(typeof(username), username);
 	if(!window.sessionStorage.getItem("username") || sessionStorage.getItem("username")=='null')
 		window.sessionStorage.setItem("username", username);
 	else{

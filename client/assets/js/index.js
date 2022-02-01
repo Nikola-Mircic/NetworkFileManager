@@ -1,7 +1,29 @@
 var filesListDiv = $("#selectedFiles");
 
+function writeLoadedFiles(directory, list){
+    directory.files.forEach((file)=>{
+        list.append(`<li>${file.name}</li>`);
+    })
+
+    Object.keys(directory.directories).forEach((key)=>{
+        var dirList = $("<ul></ul>");
+        list.append(`<li>${key}:</li>`);
+        writeLoadedFiles(directory.directories[key], dirList);
+        list.append(dirList);
+    });
+};
+
+if(userRootDir && ( Object.keys(userRootDir.directories).length>0 || userRootDir.files.length>0)){
+    $("#dropField").hide();
+    $("#selection_view").show();
+    writeLoadedFiles(userRootDir, filesListDiv);
+}
+
 function onFileDrop(event){
     event.preventDefault();
+
+    $("#dropField").hide();
+    $("#selection_view").show();
 
     var items = event.dataTransfer.items; 
     for(let i=0; i<items.length; ++i){
@@ -17,6 +39,7 @@ function onFileDrop(event){
 
 function appendFileEntryToList(list, fileEntry){
     if(fileEntry.isFile){
+        console.log("Appending ... "+fileEntry.name);
         list.append(`<li>${fileEntry.name}</li>`);
     }else if(fileEntry.isDirectory){
         list.append(`<li>${fileEntry.name}:</li>`);
@@ -77,6 +100,9 @@ function onDragOver(event){
 }
 
 async function onInput(e){
+    $("#dropField").hide();
+    $("#selection_view").show();
+
     var files = e.target.files;
     for(let i=0;i<files.length;++i){
         filesListDiv.append(`<li>${files[i].name}</li>`);
@@ -95,4 +121,19 @@ async function onInput(e){
 }
 
 $('#file').on('input',onInput);
+/*let list = $("#showFilesList");
 
+   	if(files === null){
+   		console.log('input was null...');
+   		return;
+   	}
+
+   	filesListDiv.show();
+
+   	var data = "";
+   	console.log("Loading files...");
+   	for (var i = 0; i < files.length; ++i) {
+		var name = files.item(i).name;
+   		data += `<li>${name}</li>\n`;
+	}
+   	list.html(data);*/
