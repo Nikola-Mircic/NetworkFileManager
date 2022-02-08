@@ -31,6 +31,7 @@ const DirectoryStruct = {
     directories:{}, //List of directories in a parent directory
     files:[], // List of files in a directory
 	path: "",
+	isOpen: false,
 };
 
 var userRootDir =  Object.assign({}, DirectoryStruct); // Directory where users files and directories are stored

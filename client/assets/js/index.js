@@ -6,7 +6,7 @@ function writeLoadedFiles(directory, list){
     })
 
     Object.keys(directory.directories).forEach((key)=>{
-        var dirList = $("<ul></ul>");
+        var dirList = $(`<ul id="${key}_data"></ul>`);
         list.append(`<li>${key}:</li>`);
         writeLoadedFiles(directory.directories[key], dirList);
         list.append(dirList);
@@ -19,22 +19,8 @@ if(userRootDir && ( Object.keys(userRootDir.directories).length>0 || userRootDir
     writeLoadedFiles(userRootDir, filesListDiv);
 }
 
-function onFileDrop(event){
-    event.preventDefault();
-
-    $("#dropField").hide();
-    $("#selection_view").show();
-
-    var items = event.dataTransfer.items; 
-    for(let i=0; i<items.length; ++i){
-        let item = items[i].webkitGetAsEntry();
-
-        appendFileEntryToList(filesListDiv, item);
-        loadFileData(item, userRootDir)
-            .then((success)=>{
-                if(!success) console.log("Error loading item");
-            });
-    }
+function toggleEntryList(name){
+    $(`#${name}_data`).toggle();
 }
 
 function appendFileEntryToList(list, fileEntry){
@@ -42,8 +28,8 @@ function appendFileEntryToList(list, fileEntry){
         console.log("Appending ... "+fileEntry.name);
         list.append(`<li>${fileEntry.name}</li>`);
     }else if(fileEntry.isDirectory){
-        list.append(`<li>${fileEntry.name}:</li>`);
-        var dirList = $("<ul></ul>");
+        list.append(`<li onclick=\"toggleEntryList('${fileEntry.name}')\">${fileEntry.name}:</li>`);
+        var dirList = $(`<ul id=\"${fileEntry.name}_data\" class=\"fileItem\"></ul>`);
 
         var reader = fileEntry.createReader();
         reader.readEntries((entries)=>{
@@ -93,11 +79,31 @@ function loadFileData(entry, directory){
     });
 }
 
+function onFileDrop(event){
+    event.preventDefault();
+
+    $("#dropField").hide();
+    $("#selection_view").show();
+
+    var items = event.dataTransfer.items; 
+    for(let i=0; i<items.length; ++i){
+        let item = items[i].webkitGetAsEntry();
+
+        appendFileEntryToList(filesListDiv, item);
+        loadFileData(item, userRootDir)
+            .then((success)=>{
+                if(!success) console.log("Error loading item");
+            });
+    }
+}
+
 function onDragOver(event){
     event.preventDefault();
 
     event.dataTransfer.dropEffect = 'copy'
 }
+
+$('#file').on('input',onInput);
 
 async function onInput(e){
     $("#dropField").hide();
@@ -119,21 +125,3 @@ async function onInput(e){
         userRootDir.files=[...(userRootDir.files || []),temp];
     }
 }
-
-$('#file').on('input',onInput);
-/*let list = $("#showFilesList");
-
-   	if(files === null){
-   		console.log('input was null...');
-   		return;
-   	}
-
-   	filesListDiv.show();
-
-   	var data = "";
-   	console.log("Loading files...");
-   	for (var i = 0; i < files.length; ++i) {
-		var name = files.item(i).name;
-   		data += `<li>${name}</li>\n`;
-	}
-   	list.html(data);*/

@@ -42,12 +42,20 @@
     transform: translateX(-50%);
 }
 
+#selection_view{
+    width: 100%;
+    height: fit-content;
+    background-color: rgba(255, 255, 255, 0.438);
+    padding: 0.3em;
+}
+
 #selectedFiles{
     font-size:150%;
+    padding-inline-start: 10px;
 }
 
 #selectedFiles li{
-    padding-left: 0.5em;
+    padding-left: 0.1em;
     list-style: none;
 }
 
@@ -55,4 +63,6 @@
     background-color: rgba(0, 0, 255, 0.438);
 }
 
-
+.fileItem{
+    display: none;
+}
