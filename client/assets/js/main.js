@@ -14,12 +14,13 @@ const SENDING = 1;
 const SENT = 2;
 const RECEIVING = 3;
 const RECEIVED = 4;
+const EDITING = 5;
 
 var FileStruct = { 
     name: "", //Name of a file
     type: "", //Type of a file
     size: 0, //Size of a file
-    data: null, //Data from file
+    data: null, //Data from file as a function for better preformance
     chunks: 0, //Chunks of data sent/received
 	state: WAITING, //Current state of a file. WAITING means that file is loaded and not sent yet
 	isFile: false, //true - it's a file, false - it's a directory
@@ -34,9 +35,11 @@ const DirectoryStruct = {
 	isOpen: false,
 };
 
-var userRootDir =  Object.assign({}, DirectoryStruct); // Directory where users files and directories are stored
+var workspaceFiles =  Object.assign({}, DirectoryStruct); // Directory where users files and directories are stored during editing
+var sentFiles =  Object.assign({}, DirectoryStruct); // Directory where sent files and directories are stored
+var receivedFiles =  Object.assign({}, DirectoryStruct); // Directory where received files and directories are stored
 
-window.sessionStorage.setItem("files", JSON.stringify(userRootDir));
+window.sessionStorage.setItem("files", JSON.stringify(workspaceFiles));
 
 const chunkSize = 400000;
 

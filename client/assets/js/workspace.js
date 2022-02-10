@@ -6,21 +6,43 @@ function writeLoadedFiles(directory, list){
     })
 
     Object.keys(directory.directories).forEach((key)=>{
-        var dirList = $(`<ul id="${key}_data"></ul>`);
-        list.append(`<li>${key}:</li>`);
-        writeLoadedFiles(directory.directories[key], dirList);
-        list.append(dirList);
+        if(directory.directories[key].isOpen){
+            list.append(`<li onclick=\"toggleEntryList('${key}')\"><i class=\"fa fa-angle-down\"></i> ${key}:</li>`);
+
+            var dirList = $(`<ul id="${key}_data"></ul>`);
+        
+            writeLoadedFiles(directory.directories[key], dirList);
+            list.append(dirList);
+        }else{
+            list.append(`<li onclick=\"toggleEntryList('${key}')\"><i class=\"fa fa-angle-right\"></i> ${key}:</li>`);
+        }
     });
 };
 
-if(userRootDir && ( Object.keys(userRootDir.directories).length>0 || userRootDir.files.length>0)){
+if(workspaceFiles && ( Object.keys(workspaceFiles.directories).length>0 || workspaceFiles.files.length>0)){
     $("#dropField").hide();
     $("#selection_view").show();
-    writeLoadedFiles(userRootDir, filesListDiv);
+    writeLoadedFiles(workspaceFiles, filesListDiv);
 }
 
 function toggleEntryList(name){
     $(`#${name}_data`).toggle();
+
+    toggleDirectoryOpenState(workspaceFiles, name);
+
+    filesListDiv.empty();
+    writeLoadedFiles(workspaceFiles, filesListDiv);
+}
+
+function toggleDirectoryOpenState(directory, name){
+    console.log(name, directory);
+    Object.keys(directory.directories).forEach((key)=>{
+        if(key == name){
+            directory.directories[key].isOpen = !directory.directories[key].isOpen;
+        }else{
+            toggleDirectoryOpenState(directory.directories[key], name);
+        }
+    });
 }
 
 function appendFileEntryToList(list, fileEntry){
@@ -28,7 +50,7 @@ function appendFileEntryToList(list, fileEntry){
         console.log("Appending ... "+fileEntry.name);
         list.append(`<li>${fileEntry.name}</li>`);
     }else if(fileEntry.isDirectory){
-        list.append(`<li onclick=\"toggleEntryList('${fileEntry.name}')\">${fileEntry.name}:</li>`);
+        list.append(`<li onclick=\"toggleEntryList('${fileEntry.name}')\"><i class=\"fa fa-angle-right\"></i> ${fileEntry.name}:</li>`);
         var dirList = $(`<ul id=\"${fileEntry.name}_data\" class=\"fileItem\"></ul>`);
 
         var reader = fileEntry.createReader();
@@ -90,7 +112,7 @@ function onFileDrop(event){
         let item = items[i].webkitGetAsEntry();
 
         appendFileEntryToList(filesListDiv, item);
-        loadFileData(item, userRootDir)
+        loadFileData(item, workspaceFiles)
             .then((success)=>{
                 if(!success) console.log("Error loading item");
             });
@@ -122,6 +144,6 @@ async function onInput(e){
         temp.isFile = true;
         temp.path = "";
 
-        userRootDir.files=[...(userRootDir.files || []),temp];
+        workspaceFiles.files=[...(workspaceFiles.files || []),temp];
     }
 }
