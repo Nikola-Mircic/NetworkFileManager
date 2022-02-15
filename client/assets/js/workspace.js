@@ -1,20 +1,22 @@
 var filesListDiv = $("#selectedFiles");
 
+var testDataSize = null;
+
 function writeLoadedFiles(directory, list){
     directory.files.forEach((file)=>{
-        list.append(`<li>${file.name}</li>`);
+        list.append(`<li onclick=\"showData('${file.path}')\">${file.name()}</li>`);
     })
 
     Object.keys(directory.directories).forEach((key)=>{
         if(directory.directories[key].isOpen){
-            list.append(`<li onclick=\"toggleEntryList('${key}')\"><i class=\"fa fa-angle-down\"></i> ${key}:</li>`);
+            list.append(`<li onclick=\"toggleEntryList('${directory.directories[key].path}')\"><i class=\"fa fa-angle-down\"></i> ${key}:</li>`);
 
             var dirList = $(`<ul id="${key}_data"></ul>`);
         
             writeLoadedFiles(directory.directories[key], dirList);
             list.append(dirList);
         }else{
-            list.append(`<li onclick=\"toggleEntryList('${key}')\"><i class=\"fa fa-angle-right\"></i> ${key}:</li>`);
+            list.append(`<li onclick=\"toggleEntryList('${directory.directories[key].path}')\"><i class=\"fa fa-angle-right\"></i> ${key}:</li>`);
         }
     });
 };
@@ -25,22 +27,46 @@ if(workspaceFiles && ( Object.keys(workspaceFiles.directories).length>0 || works
     writeLoadedFiles(workspaceFiles, filesListDiv);
 }
 
-function toggleEntryList(name){
-    $(`#${name}_data`).toggle();
+function toggleEntryList(path){
+    var pathSteps = path.split("/");
 
-    toggleDirectoryOpenState(workspaceFiles, name);
+    var dir = workspaceFiles;
+
+    for(let i=1; i<pathSteps.length; ++i) dir = dir.directories[pathSteps[i]];
+
+    $(`#${pathSteps[pathSteps.length-1]}_data`).toggle();
+
+    dir.isOpen = !dir.isOpen;
 
     filesListDiv.empty();
     writeLoadedFiles(workspaceFiles, filesListDiv);
 }
 
-function toggleDirectoryOpenState(directory, name){
-    console.log(name, directory);
-    Object.keys(directory.directories).forEach((key)=>{
-        if(key == name){
-            directory.directories[key].isOpen = !directory.directories[key].isOpen;
-        }else{
-            toggleDirectoryOpenState(directory.directories[key], name);
+function showData(path){
+    var pathSteps = path.split("/");
+
+    var dir = workspaceFiles;
+
+    for(let i=1; i<pathSteps.length-1; ++i) dir = dir.directories[pathSteps[i]];
+
+    let file = (dir.files.filter((testFile)=>testFile.name() == pathSteps[pathSteps.length-1]))[0];
+
+    file.data((data)=>{
+        if(file.type().split("/")[0] == "text"){
+            data = String.fromCharCode.apply(null, data);
+
+            data = data.replace(/</g,"&lt;");
+            data = data.replace(/>/g,"&gt;");
+            data = data.replace(/\n/g,"<br>");
+            data = data.replace(/\s\s\s\s/g,"&emsp; ");
+            data = data.replace(/\t/g,"&emsp; ");
+            
+            $("#dataView").html(data);
+        }
+        if(file.type().split("/")[0] == "image"){
+            var urlCreator = window.URL || window.webkitURL;
+            var imageUrl = urlCreator.createObjectURL(file.original);
+            $("#dataView").html(`<img width="100%" alt=\"${file.name()}\"src=\"${imageUrl}\">`);
         }
     });
 }
@@ -48,9 +74,9 @@ function toggleDirectoryOpenState(directory, name){
 function appendFileEntryToList(list, fileEntry){
     if(fileEntry.isFile){
         console.log("Appending ... "+fileEntry.name);
-        list.append(`<li>${fileEntry.name}</li>`);
+        list.append(`<li onclick=\"showData('${fileEntry.fullPath}')\">${fileEntry.name}</li>`);
     }else if(fileEntry.isDirectory){
-        list.append(`<li onclick=\"toggleEntryList('${fileEntry.name}')\"><i class=\"fa fa-angle-right\"></i> ${fileEntry.name}:</li>`);
+        list.append(`<li onclick=\"toggleEntryList('${fileEntry.fullPath}')\"><i class=\"fa fa-angle-right\"></i> ${fileEntry.name}:</li>`);
         var dirList = $(`<ul id=\"${fileEntry.name}_data\" class=\"fileItem\"></ul>`);
 
         var reader = fileEntry.createReader();
@@ -69,12 +95,12 @@ function loadFileData(entry, directory){
         function handleEntry(entry, directory){
             if(entry.isFile){
                 entry.file(async function(sample){
-                    let temp = Object.assign({}, FileStruct);
+                    //testDataSize = sample;
+                    var temp = {};
+                    temp.original = sample;
+                    temp = Object.assign(temp, FileStruct);
         
-                    temp.name = sample.name;
-                    temp.type = sample.type;
-                    temp.size = sample.size;
-                    temp.data = new Uint8Array(await sample.arrayBuffer());
+                    temp.original = sample;
                     temp.isFile = true;
                     temp.path = entry.fullPath;
         
@@ -133,14 +159,11 @@ async function onInput(e){
 
     var files = e.target.files;
     for(let i=0;i<files.length;++i){
-        filesListDiv.append(`<li>${files[i].name}</li>`);
+        filesListDiv.append(`<li onclick=\"showData('/${files[i].name}')\">${files[i].name}</li>`);
 
         let temp = Object.assign({}, FileStruct);
         
-        temp.name = files[i].name;
-        temp.type = files[i].type;
-        temp.size = files[i].size;
-        temp.data = new Uint8Array(await files[i].arrayBuffer());
+        temp.original = files[i];
         temp.isFile = true;
         temp.path = "";
 
