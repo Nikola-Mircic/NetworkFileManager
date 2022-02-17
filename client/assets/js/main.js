@@ -14,16 +14,43 @@ const SENDING = 1;
 const SENT = 2;
 const RECEIVING = 3;
 const RECEIVED = 4;
+const EDITING = 5;
 
 var FileStruct = { 
-    name: "", //Name of a file
-    type: "", //Type of a file
-    size: 0, //Size of a file
-    data: null, //Data from file
     chunks: 0, //Chunks of data sent/received
 	state: WAITING, //Current state of a file. WAITING means that file is loaded and not sent yet
-	isFile: false, //true - it's a file, false - it's a directory
 	path: "", // Path to the file
+
+	name:function(){
+			if(this.original) return this.original.name;
+			return undefined;
+		},
+	type:function(){
+			if(this.original) return this.original.type;
+			return "";
+		},
+	size:function(){
+			if(this.original) return this.original.size;
+			return 0;
+		},
+	//Data from file as a function for better preformance
+	data: async function(cb){
+			var t = null;
+			if(this.original){
+				var buffer = await this.original.arrayBuffer();
+				t = new Uint8Array(buffer);
+			}
+			if(cb)
+				cb(t);
+		}, 
+	dataPart: async function(begin, end){
+		var t = null;
+		if(this.original){
+			var buffer = await this.original.arrayBuffer();
+			t = new Uint8Array(buffer.slice(begin, end));
+		}
+		return t;
+	},
 };
 
 // Template for storing files and directories
@@ -34,9 +61,11 @@ const DirectoryStruct = {
 	isOpen: false,
 };
 
-var userRootDir =  Object.assign({}, DirectoryStruct); // Directory where users files and directories are stored
+var workspaceFiles =  Object.assign({}, DirectoryStruct); // Directory where users files and directories are stored during editing
+var sentFiles =  Object.assign({}, DirectoryStruct); // Directory where sent files and directories are stored
+var receivedFiles =  Object.assign({}, DirectoryStruct); // Directory where received files and directories are stored
 
-window.sessionStorage.setItem("files", JSON.stringify(userRootDir));
+window.sessionStorage.setItem("files", JSON.stringify(workspaceFiles));
 
 const chunkSize = 400000;
 
@@ -128,11 +157,11 @@ socket.on('data',function(data){
 });
 
 
-socket.on('request data',function(data){
+socket.on('request data',async function(data){
 	var fileToSent = null;
-	for(let i in selectedFiles){
+	for(let i=0; i<selectedFiles.length; ++i){
 		if((selectedFiles[i].chunks == 0) || 
-		   (selectedFiles[i].chunks*chunkSize < selectedFiles[i].size)){
+		   (selectedFiles[i].chunks*chunkSize < selectedFiles[i].size())){
 			fileToSent = selectedFiles[i];
 			selectedFiles[i].chunks++;
 			break;
@@ -145,9 +174,9 @@ socket.on('request data',function(data){
 		return;
 	}
 
-	var chunkEnd = Math.min(fileToSent.size, (fileToSent.chunks)*chunkSize);
+	var chunkEnd = Math.min(fileToSent.size(), (fileToSent.chunks)*chunkSize);
 
-	var chunk = fileToSent.data.slice((fileToSent.chunks-1)*chunkSize, chunkEnd);
+	var chunk = await fileToSent.dataPart((fileToSent.chunks-1)*chunkSize, chunkEnd);
 
 	sentSize += chunk.byteLength;
 	let percent = Math.round((sentSize*100)/packageSize);
@@ -161,9 +190,9 @@ socket.on('request data',function(data){
 		receiver: data.receiver,
 		receiverName: data.receiverName,
 		file: {
-			name: fileToSent.name,
-			type: fileToSent.type,
-			size: fileToSent.size,
+			name: fileToSent.name(),
+			type: fileToSent.type(),
+			size: fileToSent.size(),
 			data: chunk
 		}
 	});
@@ -174,25 +203,21 @@ socket.on("transfer end",function(data){
 });
 
 async function sendToUser(name, id){
-	var files = $('#file').get(0).files;
+	/*var files = $('#file').get(0).files;
 
-	console.log(files);
+	console.log(files);*/
+
+	var files = workspaceFiles.files;
 
 	for(let i=0;i<files.length;++i){
 		console.log("Processing "+i+"...");
-		let temp = Object.assign({},FileStruct);
-		temp.name = files[i].name;
-		temp.type = files[i].type;
-		temp.size = files[i].size;
-
-		temp.data = new Uint8Array(await files[i].arrayBuffer());
-		selectedFiles.push(temp);
+		selectedFiles.push(files[i]);
 	}
 
 	sentSize = 0;
 	packageSize = 0;
 	selectedFiles.forEach(function(item, idx){
-		packageSize += item.data.length;
+		packageSize += item.size();
 		console.log(item);
 	});
 
@@ -204,10 +229,10 @@ async function sendToUser(name, id){
 	});
 
 	var chunk = -1;
-	if(selectedFiles[0].size < chunkSize){
-		chunk = selectedFiles[0].data;
+	if(selectedFiles[0].size() < chunkSize){
+		chunk = await selectedFiles[0].data();
 	}else{
-		chunk = selectedFiles[0].data.slice(0,chunkSize);
+		chunk = await selectedFiles[0].dataPart(0,chunkSize);
 	}
 
 	selectedFiles[0].chunks++;
@@ -217,9 +242,9 @@ async function sendToUser(name, id){
 		receiver: id,
 		receiverName: name,
 		file: {
-			name: selectedFiles[0].name,
-			type: selectedFiles[0].type,
-			size: selectedFiles[0].size,
+			name: selectedFiles[0].name(),
+			type: selectedFiles[0].type(),
+			size: selectedFiles[0].size(),
 			data: chunk
 		}
 	});
@@ -231,6 +256,8 @@ async function sendToUser(name, id){
 	$(".progress-done").css("width", percent+'%');
 	$(".progress-done").css("opacity", "1");
 	$(".progress-done").html(percent+'%'); 
+
+	console.log(selectedFiles);
 };
 
 $("#received button").on('click', function(e){
