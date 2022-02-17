@@ -17,13 +17,8 @@ const RECEIVED = 4;
 const EDITING = 5;
 
 var FileStruct = { 
-    name: "", //Name of a file
-    type: "", //Type of a file
-    size: 0, //Size of a file
-    data: null, //Data from file as a function for better preformance
     chunks: 0, //Chunks of data sent/received
 	state: WAITING, //Current state of a file. WAITING means that file is loaded and not sent yet
-	isFile: false, //true - it's a file, false - it's a directory
 	path: "", // Path to the file
 
 	name:function(){
@@ -45,7 +40,8 @@ var FileStruct = {
 				var buffer = await this.original.arrayBuffer();
 				t = new Uint8Array(buffer);
 			}
-			cb(t);
+			if(cb)
+				cb(t);
 		}, 
 	dataPart: async function(begin, end){
 		var t = null;

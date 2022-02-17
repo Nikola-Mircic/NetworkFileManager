@@ -52,21 +52,26 @@ function showData(path){
     let file = (dir.files.filter((testFile)=>testFile.name() == pathSteps[pathSteps.length-1]))[0];
 
     file.data((data)=>{
+        $("#dataView").html(`<div id="fileStats">
+                                <h3 id="fileName"></h3>
+                                <h3 id="fileSize"></h3>
+                            </div>`);
         if(file.type().split("/")[0] == "text"){
             data = String.fromCharCode.apply(null, data);
 
-            data = data.replace(/</g,"&lt;");
-            data = data.replace(/>/g,"&gt;");
-            data = data.replace(/\n/g,"<br>");
-            data = data.replace(/\s\s\s\s/g,"&emsp; ");
-            data = data.replace(/\t/g,"&emsp; ");
-            
-            $("#dataView").html(data);
+            var t = $("<textarea></textarea>");
+            t.val(data);
+            $("#dataView").append(t);
+            $("#fileName").html(`${file.name()}`);
+            $("#fileSize").html(`${file.size()/1000} kb`);
         }
         if(file.type().split("/")[0] == "image"){
             var urlCreator = window.URL || window.webkitURL;
             var imageUrl = urlCreator.createObjectURL(file.original);
-            $("#dataView").html(`<img width="100%" alt=\"${file.name()}\"src=\"${imageUrl}\">`);
+            
+            $("#dataView").append(`<img width="100%" alt=\"${file.name()}\"src=\"${imageUrl}\">`);
+            $("#fileName").html(`${file.name()}`);
+            $("#fileSize").html(`${file.size()/1000} kb`);
         }
     });
 }
