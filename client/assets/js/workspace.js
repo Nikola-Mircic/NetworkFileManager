@@ -4,7 +4,12 @@ var testDataSize = null;
 
 function writeLoadedFiles(directory, list){
     directory.files.forEach((file)=>{
-        list.append(`<li onclick=\"showData('${file.path}')\">${file.name()}</li>`);
+        let filePath = (file.path=="")?("/"+file.name()):file.path;
+        list.append(`<li onclick=\"showData('${filePath}')\">${file.name()}</li>`);
+        
+        if(file.state == EDITING){
+            showData(filePath);
+        }
     })
 
     Object.keys(directory.directories).forEach((key)=>{
@@ -49,7 +54,25 @@ function showData(path){
 
     for(let i=1; i<pathSteps.length-1; ++i) dir = dir.directories[pathSteps[i]];
 
-    let file = (dir.files.filter((testFile)=>testFile.name() == pathSteps[pathSteps.length-1]))[0];
+    var file = (dir.files.filter((testFile)=>testFile.name() == pathSteps[pathSteps.length-1]))[0];
+    
+    console.log(file.state);
+
+    if(file.state == EDITING){
+        $("#dataView").hide();
+        file.state = WAITING;
+        return;
+    }
+
+    if(file.state != WAITING) return;
+
+    doForEachFile(workspaceFiles, (file)=>{
+        if(file.state == EDITING) file.state = WAITING;
+    })
+
+    file.state = EDITING;
+
+    $("#dataView").show();
 
     file.data((data)=>{
         $("#dataView").html(`<div id="fileStats">
@@ -61,9 +84,12 @@ function showData(path){
 
             var t = $("<textarea></textarea>");
             t.val(data);
+
             $("#dataView").append(t);
             $("#fileName").html(`${file.name()}`);
             $("#fileSize").html(`${file.size()/1000} kb`);
+
+            $("textarea").on('change keyup paste', updateTextData);
         }
         if(file.type().split("/")[0] == "image"){
             var urlCreator = window.URL || window.webkitURL;
@@ -74,6 +100,27 @@ function showData(path){
             $("#fileSize").html(`${file.size()/1000} kb`);
         }
     });
+}
+
+//Calls function 'handle' for every file in the 'dir' directory
+function doForEachFile(dir, handle){
+    dir.files.forEach((file)=>handle(file));
+
+    Object.keys(dir.directories).forEach((key)=>{
+        doForEachFile(dir.directories[key], handle);
+    });
+}
+
+function updateTextData(){
+    var text = this.value;
+    /*console.log("Textarea update")*/
+    doForEachFile(workspaceFiles, (file)=>{
+        if(file.state == EDITING){
+            file.original = new File([text], file.name(), {
+                    type: file.type(),
+                });
+        }
+    })
 }
 
 function appendFileEntryToList(list, fileEntry){
