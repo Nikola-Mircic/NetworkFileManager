@@ -17,6 +17,7 @@ const RECEIVED = 4;
 const EDITING = 5;
 
 var FileStruct = { 
+	original: null, // File variable containing unprocessed data
     chunks: 0, //Chunks of data sent/received
 	state: WAITING, //Current state of a file. WAITING means that file is loaded and not sent yet
 	path: "", // Path to the file
