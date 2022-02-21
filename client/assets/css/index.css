@@ -49,14 +49,34 @@
     padding: 0.3em;
 }
 
+#selection_view>div{
+    position: relative;
+    display: block;
+    width: 50%;
+    min-width: 300px;
+    height: 1.2rem;
+    margin: 5px auto 15px auto;
+}
+
+#selection_view button{
+    position: absolute;
+    display: block;
+    width: 100%;
+    height: fit-content;
+    font-size: 135%;
+    border: 2px solid rgba(0, 0, 255, 0.438);
+}
+
 #selectedFiles{
     font-size:150%;
     padding-inline-start: 10px;
 }
 
 #selectedFiles li{
+    max-width: 100%;
     padding-left: 0.1em;
     list-style: none;
+    margin-bottom: 7px;
 }
 
 #selectedFiles li:hover{
@@ -68,6 +88,7 @@
 }
 
 #dataView{
+    position: relative;
     margin: 15px auto;
     padding: 0;
     width: 100%;
@@ -78,7 +99,17 @@
     margin: 5px auto;
     display: flex;
     justify-content: space-between;
+    flex-wrap: wrap;
     max-width: 90%;
+}
+
+#fileStats p{
+    word-break: break-all;
+    white-space: normal;
+}
+
+li>#fileStats{
+    max-width: 100%;
 }
 
 #dataView h3{
