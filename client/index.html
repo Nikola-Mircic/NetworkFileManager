@@ -40,22 +40,24 @@
 	</nav>
 
 	<div id="workspace">
-		<div id="dropField" ondrop="onFileDrop(event);" ondragover="onDragOver(event);">
-			<div id="dropHints">
-				<p>Select files and folders by dragging them here or by clicking button below...</p>
-				<input type="file" name="file" id="file" style="display: none;" multiple/>
-				<button onclick="document.getElementById('file').click();">Select files</button>
+		<div ondrop="onFileDrop(event);" ondragover="onDragOver(event);">
+			<div id="dropField">
+				<div id="dropHints">
+					<p>Select files and folders by dragging them here or by clicking button below...</p>
+					<input type="file" name="file" id="file" style="display: none;" multiple/>
+					<button onclick="document.getElementById('file').click();">Select files</button>
+				</div>
+			</div>
+			<div id="selection_view" style="display: none;">
+				<div>
+					<button onclick="document.getElementById('file').click();">Select files</button>
+				</div>
+				<ul id="selectedFiles">
+	
+				</ul>
 			</div>
 		</div>
-		<div id="selection_view" style="display: none;">
-			<div>
-				<button onclick="document.getElementById('file').click();">Select files</button>
-			</div>
-			<ul id="selectedFiles">
-
-			</ul>
-		</div>
-
+		
 		<div id="dataView">
 			<div id="fileStats">
 				<h3 id="fileName"></h3>
