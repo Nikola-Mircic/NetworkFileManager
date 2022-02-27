@@ -64,7 +64,7 @@
     width: 100%;
     height: fit-content;
     font-size: 135%;
-    border: 2px solid rgba(0, 0, 255, 0.438);
+    border: 2px solid rgba(16, 14, 54, 0.9);;
 }
 
 #selectedFiles{

@@ -104,7 +104,7 @@ function writeLoadedFiles(directory, list){
         let filePath = (file.path=="")?("/"+file.name()):file.path;
         list.append(`<li onclick=\"showData('${filePath}')\">
                         <div id="fileStats">
-                            <p id="fileName">${file.name()}</p>
+                            <p id="fileName"> <i class="fa-regular fa-file"></i> ${file.name()}</p>
                             <p id="fileSize">${file.size()/1000} kb</p>
                         </div>
                     </li>`);
@@ -117,7 +117,7 @@ function writeLoadedFiles(directory, list){
     Object.keys(directory.directories).forEach((key)=>{
         if(directory.directories[key].isOpen){
             list.append(`<li onclick=\"toggleEntryList('${directory.directories[key].path}')\">
-                            <i class=\"fa fa-angle-down\"></i> ${key}:
+							<i class="fa-regular fa-folder-open"></i> ${key}:
                          </li>`);
 
             var dirList = $(`<ul id="${key}_data"></ul>`);
@@ -126,7 +126,7 @@ function writeLoadedFiles(directory, list){
             list.append(dirList);
         }else{
             list.append(`<li onclick=\"toggleEntryList('${directory.directories[key].path}')\">
-                            <i class=\"fa fa-angle-right\"></i> ${key}:
+							<i class="fa-solid fa-folder"></i> ${key}:
                          </li>`);
         }
     });
