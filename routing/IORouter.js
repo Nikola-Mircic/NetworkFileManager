@@ -1,6 +1,11 @@
 const IORouter = function(io, saveFile, saveLogData){
     var startTime = 0;
     var regUser = [];
+
+    const LogSystem = require("../logsystem.js");
+    const Log = new LogSystem();
+    const LOG_PATH = __dirname+"/db/logs/log_history.dat";
+
     io.on('connection', (socket)=>{
         console.log("Sending data to new user");
         regUser.forEach((item, index)=>{
