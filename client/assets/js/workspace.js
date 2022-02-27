@@ -162,7 +162,7 @@ async function onInput(e){
     for(let i=0;i<files.length;++i){
         filesListDiv.append(`<li onclick=\"showData('/${files[i].name}')\">
                                 <div id="fileStats">
-                                    <p id="fileName">${files[i].name}</p>
+                                    <p id="fileName"> <i class="fa-regular fa-file"></i> ${files[i].name}</p>
                                     <p id="fileSize">${files[i].size/1000} kb</p>
                                 </div>
                             </li>`);

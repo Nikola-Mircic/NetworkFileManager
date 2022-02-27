@@ -287,3 +287,7 @@ button:hover {
 	opacity: 0;
 	transition: 0.5s linear;
 }
+
+i{
+	transform: scale(0.8, 0.8);
+}
