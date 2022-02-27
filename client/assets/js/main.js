@@ -43,6 +43,8 @@ var FileStruct = {
 			}
 			if(cb)
 				cb(t);
+			else
+				return t;
 		}, 
 	dataPart: async function(begin, end){
 		var t = null;
@@ -68,7 +70,7 @@ var receivedFiles =  Object.assign({}, DirectoryStruct); // Directory where rece
 
 window.sessionStorage.setItem("files", JSON.stringify(workspaceFiles));
 
-const chunkSize = 400000;
+const chunkSize = 1000;//400000;
 
 function redirect(path){
 	console.log(window.location);
@@ -92,6 +94,44 @@ function getBody(page){
 	return page.substring(page.indexOf("<body>"),page.indexOf("</body>"));
 }
 
+function writeLoadedFiles(directory, list){
+    list.empty();
+	if(directory.directories.length>0 || directory.files.length>0){
+		$("#dropField").hide();
+    	$("#selection_view").show();
+	}
+    directory.files.forEach((file)=>{
+        let filePath = (file.path=="")?("/"+file.name()):file.path;
+        list.append(`<li onclick=\"showData('${filePath}')\">
+                        <div id="fileStats">
+                            <p id="fileName">${file.name()}</p>
+                            <p id="fileSize">${file.size()/1000} kb</p>
+                        </div>
+                    </li>`);
+        
+        if(file.state == EDITING){
+            showData(filePath);
+        }
+    })
+
+    Object.keys(directory.directories).forEach((key)=>{
+        if(directory.directories[key].isOpen){
+            list.append(`<li onclick=\"toggleEntryList('${directory.directories[key].path}')\">
+                            <i class=\"fa fa-angle-down\"></i> ${key}:
+                         </li>`);
+
+            var dirList = $(`<ul id="${key}_data"></ul>`);
+
+            writeLoadedFiles(directory.directories[key], dirList);
+            list.append(dirList);
+        }else{
+            list.append(`<li onclick=\"toggleEntryList('${directory.directories[key].path}')\">
+                            <i class=\"fa fa-angle-right\"></i> ${key}:
+                         </li>`);
+        }
+    });
+};
+
 socket.on('newUser',function(data){
 	$("users").show();
 	console.log(activeUsers);
@@ -112,42 +152,41 @@ socket.on('removeUser', function(data){
 socket.on("start-transfer",function(data){
 	$(".progress").show();
 	receivedSize = 0;
-	packageSize = data.size;
+	console.log(data);
+	packageSize = data.info.size;
+
+	data.info.files.forEach((file)=>{
+		receivedFiles[file.name] = {
+			data: new Uint8Array(),
+			type: "",
+			fileSize: file.fileSize
+		}
+	})
 })
 
-socket.on('data',function(data){
-	receivedSize += data.file.data.byteLength;
-	let percent = Math.round((receivedSize*100)/packageSize);
+socket.on('data',async function(data){
+	console.log(data);
+	var fileName = data.file.name;
+	if(receivedFiles[fileName]){
+		var concat = new Uint8Array(receivedFiles[fileName].data.byteLength + data.file.data.byteLength);
+		concat.set(new Uint8Array(receivedFiles[fileName].data));
+		concat.set(new Uint8Array(data.file.data), receivedFiles[fileName].data.byteLength);
 
-	$(".progress-done").css("width", percent+'%');
-	$(".progress-done").css("opacity", "1");
-	$(".progress-done").html(percent+'%'); 
+		receivedFiles[fileName].data = concat;
 
-	if(!receivedFiles[data.file.name]){
-		receivedFiles[data.file.name] = Object.assign({}, FileStruct, data.file);
+		if(receivedFiles[fileName].data.byteLength == receivedFiles[fileName].fileSize){
+			console.log(`Making new ${fileName} file...`);
+			var newOriginal = new File([receivedFiles[fileName].data], fileName, {type:data.file.type});
+			var newFile = Object.assign({}, FileStruct);
+			newFile.original = newOriginal
+			workspaceFiles.files.push(newFile);
+			console.log(newFile);
+		}
+
+		writeLoadedFiles(workspaceFiles, filesListDiv);
 	}else{
-		var concat = new Uint8Array(receivedFiles[data.file.name].data.byteLength + data.file.data.byteLength);
-		concat.set(new Uint8Array(receivedFiles[data.file.name].data));
-		concat.set(new Uint8Array(data.file.data), receivedFiles[data.file.name].data.byteLength);
-
-		receivedFiles[data.file.name].data = concat;
-	}
-	
-	receivedFiles[data.file.name].chunks++;
-
-	if(receivedFiles[data.file.name].chunks * chunkSize >= data.file.size){
-		var blob = new Blob([receivedFiles[data.file.name].data],
-							 {type: data.file.type});
-
-		let url = window.URL.createObjectURL(blob);
-
-		var a = `<li><a href="${url}" download="${data.file.name}">${data.file.name}</a></li><br>`;
-
-		$("#received").show();
-		$("#data ol").append(a);
-
-		console.log(`Received file: `);
-		console.log(receivedFiles[data.file.name]);
+		console.log(`Unexpected file found ${fileName} [${data.file.size} b]`);
+		receivedFiles[fileName] = Object.assign({}, data.file);
 	}
 
 	socket.emit('request data',{
@@ -201,6 +240,14 @@ socket.on('request data',async function(data){
 
 socket.on("transfer end",function(data){
 	setTimeout(function() {$(".progress").hide();}, 1000);
+
+	Object.keys(receivedFiles).forEach((filename)=>{
+		var newOrigin = new File([receivedFiles[filename].data], filename, {
+									type: receivedFiles[filename].type
+								});
+		var newFile = Object.assign({}, FileStruct);
+		
+	});
 });
 
 async function sendToUser(name, id){
@@ -226,7 +273,14 @@ async function sendToUser(name, id){
 		from: socket.id,
 		receiver: id,
 		receiverName: name,
-		size: packageSize
+		info:{
+			size: packageSize,
+			files: selectedFiles.map((file)=>{
+									return {name: file.name(),
+											fileSize: file.size()
+											}
+								})
+		}
 	});
 
 	var chunk = -1;

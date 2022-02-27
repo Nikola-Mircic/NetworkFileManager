@@ -2,40 +2,6 @@ var filesListDiv = $("#selectedFiles");
 
 var testDataSize = null;
 
-function writeLoadedFiles(directory, list){
-    list.empty();
-    directory.files.forEach((file)=>{
-        let filePath = (file.path=="")?("/"+file.name()):file.path;
-        list.append(`<li onclick=\"showData('${filePath}')\">
-                        <div id="fileStats">
-                            <p id="fileName">${file.name()}</p>
-                            <p id="fileSize">${file.size()/1000} kb</p>
-                        </div>
-                    </li>`);
-        
-        if(file.state == EDITING){
-            showData(filePath);
-        }
-    })
-
-    Object.keys(directory.directories).forEach((key)=>{
-        if(directory.directories[key].isOpen){
-            list.append(`<li onclick=\"toggleEntryList('${directory.directories[key].path}')\">
-                            <i class=\"fa fa-angle-down\"></i> ${key}:
-                         </li>`);
-
-            var dirList = $(`<ul id="${key}_data"></ul>`);
-
-            writeLoadedFiles(directory.directories[key], dirList);
-            list.append(dirList);
-        }else{
-            list.append(`<li onclick=\"toggleEntryList('${directory.directories[key].path}')\">
-                            <i class=\"fa fa-angle-right\"></i> ${key}:
-                         </li>`);
-        }
-    });
-};
-
 if(workspaceFiles && ( Object.keys(workspaceFiles.directories).length>0 || workspaceFiles.files.length>0)){
     $("#dropField").hide();
     $("#selection_view").show();

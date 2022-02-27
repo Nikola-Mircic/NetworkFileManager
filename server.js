@@ -17,7 +17,6 @@ var available_adresses = getLocalAddressList();
 var IP = "localhost";
 
 const LogSystem = require("./logsystem.js");
-const { diffieHellman } = require('crypto');
 const Log = new LogSystem();
 const LOG_PATH = __dirname+"/db/logs/log_history.dat";
 
