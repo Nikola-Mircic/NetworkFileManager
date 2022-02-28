@@ -1,3 +1,5 @@
+'use strict'
+
 var filesListDiv = $("#selectedFiles");
 
 var testDataSize = null;
@@ -10,6 +12,8 @@ if(workspaceFiles && ( Object.keys(workspaceFiles.directories).length>0 || works
 
 function toggleEntryList(path){
     var pathSteps = path.split("/");
+
+    console.log(pathSteps);
 
     var dir = workspaceFiles;
 
