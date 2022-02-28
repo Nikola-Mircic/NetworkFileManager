@@ -1,4 +1,4 @@
-"use strict";
+'use strict'
 
 var activeUsers = [];
 var receivedFiles = {};
@@ -70,7 +70,7 @@ var receivedFiles =  Object.assign({}, DirectoryStruct); // Directory where rece
 
 window.sessionStorage.setItem("files", JSON.stringify(workspaceFiles));
 
-const chunkSize = 1000;//400000;
+const chunkSize = 400000;
 
 function redirect(path){
 	console.log(window.location);
@@ -96,7 +96,7 @@ function getBody(page){
 
 function writeLoadedFiles(directory, list){
     list.empty();
-	if(directory.directories.length>0 || directory.files.length>0){
+	if(Object.keys(directory.directories)>0 || directory.files.length>0){
 		$("#dropField").hide();
     	$("#selection_view").show();
 	}
@@ -179,7 +179,10 @@ socket.on('data',async function(data){
 			var newOriginal = new File([receivedFiles[fileName].data], fileName, {type:data.file.type});
 			var newFile = Object.assign({}, FileStruct);
 			newFile.original = newOriginal
-			workspaceFiles.files.push(newFile);
+			newFile.path = data.file.path;
+
+			insertFile(newFile);
+
 			console.log(newFile);
 		}
 
@@ -196,6 +199,29 @@ socket.on('data',async function(data){
 	})
 });
 
+function insertFile(file){
+	var pathSteps = file.path.split("/");
+	console.log(pathSteps);
+	var pathPassed = "/";
+
+    var dir = workspaceFiles;
+
+    for(let i=1; i<pathSteps.length-1; ++i){
+		pathPassed += pathSteps[i];
+		if(!dir.directories[pathSteps[i]]){
+			console.log(`Folder ${pathSteps[i]} doesn't exists`);
+			var newDir = Object.assign({}, DirectoryStruct);
+			newDir.directories = {};
+			newDir.path = pathPassed;
+
+			dir.directories[pathSteps[i]] = newDir;
+		}
+		pathPassed+="/";
+		dir = dir.directories[pathSteps[i]];
+	}
+
+	dir.files = [...(dir.files || []), file];
+}
 
 socket.on('request data',async function(data){
 	var fileToSent = null;
@@ -233,6 +259,7 @@ socket.on('request data',async function(data){
 			name: fileToSent.name(),
 			type: fileToSent.type(),
 			size: fileToSent.size(),
+			path: fileToSent.path,
 			data: chunk
 		}
 	});
@@ -240,23 +267,12 @@ socket.on('request data',async function(data){
 
 socket.on("transfer end",function(data){
 	setTimeout(function() {$(".progress").hide();}, 1000);
-
-	Object.keys(receivedFiles).forEach((filename)=>{
-		var newOrigin = new File([receivedFiles[filename].data], filename, {
-									type: receivedFiles[filename].type
-								});
-		var newFile = Object.assign({}, FileStruct);
-		
-	});
 });
 
 async function sendToUser(name, id){
-	/*var files = $('#file').get(0).files;
-
-	console.log(files);*/
-
-	var files = workspaceFiles.files;
-
+	var files = extractFiles(workspaceFiles);
+	console.log(files);
+	
 	for(let i=0;i<files.length;++i){
 		console.log("Processing "+i+"...");
 		selectedFiles.push(files[i]);
@@ -300,6 +316,7 @@ async function sendToUser(name, id){
 			name: selectedFiles[0].name(),
 			type: selectedFiles[0].type(),
 			size: selectedFiles[0].size(),
+			path: selectedFiles[0].path,
 			data: chunk
 		}
 	});
@@ -311,9 +328,20 @@ async function sendToUser(name, id){
 	$(".progress-done").css("width", percent+'%');
 	$(".progress-done").css("opacity", "1");
 	$(".progress-done").html(percent+'%'); 
-
-	console.log(selectedFiles);
 };
+
+function extractFiles(dir){
+	var dirFiles = new Array();
+
+	dirFiles = dirFiles.concat(dir.files);
+
+	Object.keys(dir.directories).forEach(function(key){
+
+		dirFiles = dirFiles.concat(extractFiles(dir.directories[key]));
+	});
+
+	return dirFiles;
+}
 
 $("#received button").on('click', function(e){
     e.preventDefault();
