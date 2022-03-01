@@ -17,12 +17,16 @@ var available_adresses = getLocalAddressList();
 var IP = "localhost";
 
 const LogSystem = require("./logsystem.js");
+const { wirte_log } = require('./routing/IORouter');
 const Log = new LogSystem();
 const LOG_PATH = __dirname+"/db/logs/log_history.dat";
 
 const default_ip = findValue("-default-ip");
 const default_addr_name = findValue("-default-addr-name");
 const default_port = findValue("-default-port");
+
+const save_files = (findValue("-save-files")=="true") ? true:false;
+const write_log = (findValue("-write-log")=="true") ? true:false;
 
 if(default_port !== ""){
 	PORT = parseInt(default_port);
@@ -34,14 +38,14 @@ if(default_ip !== ""){
 	server.listen(PORT,IP,()=>{
 		console.log("Server started on http://"+IP+":"+PORT);
 	});
-	IORouter(io, saveFile, saveLogData);
+	IORouter.getRouter({save_files:save_files, write_log:write_log}).listen(io, saveFile, saveLogData);
 }else if(default_addr_name !== ""){
 	IP = available_adresses[default_addr_name][0];
 
 	server.listen(PORT,IP,()=>{
 		console.log("Server started on http://"+IP+":"+PORT);
 	});
-	IORouter(io, saveFile, saveLogData);
+	IORouter.getRouter({save_files:save_files, write_log:write_log}).listen(io, saveFile, saveLogData);
 }else{
 	inputUserAddress();
 }
@@ -106,7 +110,7 @@ function inputUserAddress(){
 		server.listen(PORT,IP,()=>{
 			console.log("Server started on http://"+IP+":"+PORT);
 		});
-		IORouter(io, saveFile, saveLogData);
+		IORouter.getRouter({save_files:save_files, write_log:write_log}).listen(io, saveFile, saveLogData);
 	});
 }
 
