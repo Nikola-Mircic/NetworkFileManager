@@ -74,9 +74,8 @@
 
 #selectedFiles li{
     max-width: 100%;
-    padding-left: 0.1em;
+    padding: 0.1em 0.5em;
     list-style: none;
-    margin-bottom: 7px;
 }
 
 #selectedFiles li:hover{

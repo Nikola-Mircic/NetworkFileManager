@@ -73,7 +73,7 @@ function showData(path){
             var urlCreator = window.URL || window.webkitURL;
             var imageUrl = urlCreator.createObjectURL(file.original);
             
-            $("#dataView").append(`<img width="100%" alt=\"${file.name()}\"src=\"${imageUrl}\">`);
+            $("#dataView").append(`<img  style="max-height:500px;margin: 15px auto;display: block;" alt=\"${file.name()}\"src=\"${imageUrl}\">`);
             $("#dataView #fileName").html(`${file.name()}`);
             $("#dataView #fileSize").html(`${file.size()/1000} kb`);
         }

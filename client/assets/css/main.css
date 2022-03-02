@@ -36,7 +36,7 @@ body{
 	margin: 0 auto;
 }
 
-#headerContainer{
+.headerContainer{
 	display: block;
 	width:50%;
 	min-width: 500px;
@@ -77,7 +77,7 @@ body{
 	display: flexbox;
 	margin: auto;
 	background-color: rgba(255, 255, 255, 0.438);
-	border-radius: 5%;
+	border-radius: 5px;
 	width: 60%;
 	min-width: 230px;
 	height: 90%;
@@ -100,7 +100,7 @@ body{
 .profileField button {
 	display: flexbox;
 	margin: auto;
-	border-radius: 5%;
+	border-radius: 5px;
 	width: 35%;
 	min-width: 150px;
 	height: 90%;
@@ -200,18 +200,6 @@ button:hover {
 	border: 3px solid rgb(50, 50, 200);
 	width: 80%;
 	min-height: 50px;
-}
-
-#selectedFiles h3{
-	margin: 15px 0 15px 15px;
-}
-
-#selectedFiles ol{
-	margin-left: 5%;
-}
-
-#selectedFiles ol li{
-	margin: 5px 0 5px 0;
 }
 
 #received h3{
