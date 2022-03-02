@@ -35,6 +35,10 @@ const PathRouter = function(saveFile, saveLogData, rootPath){
         console.log(`Sending response to the user [${requestIp.getClientIp(req)}]...`);
         res.sendFile(rootPath+'/client/sent.html');
     });
+
+    this.app.get('/get-user-ip', function(req, res){
+        res.send(requestIp.getClientIp(req));
+    });
     
     app.post('/', function(req, res){
         if(Array.isArray(req.files.file)){

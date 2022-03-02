@@ -10,6 +10,20 @@ if(workspaceFiles && ( Object.keys(workspaceFiles.directories).length>0 || works
     writeLoadedFiles(workspaceFiles, filesListDiv);
 }
 
+$(".headerContainer").on('click', ()=>{
+    console.log("Clicked header!");
+    $("#headerContainer").toggle();
+    $("#userIpAddr").toggle();
+});
+
+fetch(window.location.origin+'/get-user-ip').then((ip)=>{
+    if(!ip) return;
+
+    ip.text().then((value)=>{
+        $("#ipv4").html(value);
+    });
+})
+
 function toggleEntryList(path){
     var pathSteps = path.split("/");
 

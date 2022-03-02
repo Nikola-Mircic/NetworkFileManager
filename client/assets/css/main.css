@@ -47,10 +47,10 @@ body{
 	vertical-align: middle;
 }
 
-#header h1{
+#header h1, #header h6{
 	color: rgba(16, 14, 54);
 	background-color: #eeeeee55;
-	font-size: 42px;
+	font-size: 230%;
 	font-weight: 5px;
 	font-family: 'Times New Roman', Times, serif;
 	border: 2px solid #202020;
@@ -58,6 +58,10 @@ body{
 	padding-bottom: 0.2rem;
 	margin-top: 0.3rem;
 	margin-bottom: 0.3rem;
+}
+
+#header h6 span{
+	color: white;
 }
 
 .profileField {
