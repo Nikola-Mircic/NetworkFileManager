@@ -10,12 +10,6 @@ if(workspaceFiles && ( Object.keys(workspaceFiles.directories).length>0 || works
     writeLoadedFiles(workspaceFiles, filesListDiv);
 }
 
-$(".headerContainer").on('click', ()=>{
-    console.log("Clicked header!");
-    $("#headerContainer").toggle();
-    $("#userIpAddr").toggle();
-});
-
 fetch(window.location.origin+'/get-user-ip').then((ip)=>{
     if(!ip) return;
 
@@ -23,6 +17,18 @@ fetch(window.location.origin+'/get-user-ip').then((ip)=>{
         $("#ipv4").html(value);
     });
 })
+
+$(".headerContainer").on('click', ()=>{
+    console.log("Clicked header!");
+    $("#headerContainer").toggle();
+    $("#userIpAddr").toggle();
+});
+
+(function(){
+    var head = $("head");
+    var link = $("<link rel='stylesheet' type='text/css' href='./assets/css/index.css'>");
+    head.append(link);
+})();
 
 function toggleEntryList(path){
     var pathSteps = path.split("/");

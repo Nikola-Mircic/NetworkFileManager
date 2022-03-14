@@ -1,5 +1,7 @@
 'use strict'
 
+//const socket = require("socket.io-client/lib/socket");
+
 var activeUsers = [];
 var receivedFiles = {};
 var selectedFiles = [];
@@ -131,12 +133,11 @@ function writeLoadedFiles(directory, list){
 };
 
 socket.on('newUser',function(data){
-	$("users").show();
-	console.log(activeUsers);
 	if(activeUsers.map((user)=>user.id).indexOf(data.id) === -1)
 		activeUsers[activeUsers.length] = data;
-	console.log(activeUsers);
-	showUsers();
+
+	if(typeof(onUsersUpdate) !== 'undefined')
+		onUsersUpdate();
 });
 
 socket.on('removeUser', function(data){
@@ -144,17 +145,19 @@ socket.on('removeUser', function(data){
 		return val.id != data.id;
 	});
 
-	showUsers();
+	if(typeof(onUsersUpdate) !== 'undefined')
+		onUsersUpdate();
 });
 
 socket.on("start-transfer",function(data){
-	$(".progress").show();
 	receivedSize = 0;
 	console.log(data);
 	packageSize = data.info.size;
 
 	data.info.files.forEach((file)=>{
-		receivedFiles[file.name] = {
+		if(receivedFiles[""+file.name])
+			console.log("Rewriting file");
+		receivedFiles[""+file.name] = {
 			data: new Uint8Array(),
 			type: "",
 			fileSize: file.fileSize
@@ -162,7 +165,7 @@ socket.on("start-transfer",function(data){
 	})
 })
 
-socket.on('data',async function(data){
+socket.on('data',function(data){
 	console.log(data);
 	var fileName = data.file.name;
 	if(receivedFiles[fileName]){
@@ -207,7 +210,7 @@ function insertFile(file){
     for(let i=1; i<pathSteps.length-1; ++i){
 		pathPassed += pathSteps[i];
 		if(!dir.directories[pathSteps[i]]){
-			console.log(`Folder ${pathSteps[i]} doesn't exists`);
+			console.log(`Folder "${pathSteps[i]}" doesn't exists`);
 			var newDir = Object.assign({}, DirectoryStruct);
 			newDir.directories = {};
 			newDir.path = pathPassed;
@@ -222,6 +225,10 @@ function insertFile(file){
 }
 
 socket.on('request data',async function(data){
+	console.log("==================================");
+	console.log('Requested Data');
+	console.log('data');
+	console.log("==================================");
 	var fileToSent = null;
 	for(let i=0; i<selectedFiles.length; ++i){
 		if((selectedFiles[i].chunks == 0) || 
@@ -265,6 +272,7 @@ socket.on('request data',async function(data){
 
 socket.on("transfer end",function(data){
 	setTimeout(function() {$(".progress").hide();}, 1000);
+	receivedFiles = {};
 });
 
 async function sendToUser(name, id){
@@ -408,7 +416,7 @@ function updateUser(username){
 
 updateUser(window.sessionStorage.getItem("username"));
 
-function showUsers(){
+/*function showUsers(){
 	if(activeUsers.length > 0){
 		$("#users").show();
 	}else{
@@ -428,7 +436,7 @@ function showUsers(){
 	});
 
 	$("#users").html(data);
-}
+}*/
 
 function extractFileName(fullPath){
 	if (fullPath) {

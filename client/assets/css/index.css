@@ -40,6 +40,7 @@
     left: 50%;
     bottom: 15%;
     transform: translateX(-50%);
+    font-size: 100%;
 }
 
 #selection_view{
