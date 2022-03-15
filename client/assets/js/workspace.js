@@ -80,20 +80,22 @@ function showData(path){
         if(file.type().split("/")[0] == "text"){
             data = String.fromCharCode.apply(null, data);
 
-            var t = $("<textarea></textarea>");
+            var t = $(`<textarea id="file_${file.name()}"></textarea>`);
             t.val(data);
 
             $("#dataView").append(t);
-            $("#dataView #fileName").html(`${file.name()}`);
+            $("#dataView #fileName").html(file.name());
             $("#dataView #fileSize").html(`${file.size()/1000} kb`);
 
             $("textarea").on('change keyup paste', updateTextData);
+
+            document.getElementById("dataView").scrollIntoView();
         }
         if(file.type().split("/")[0] == "image"){
             var urlCreator = window.URL || window.webkitURL;
             var imageUrl = urlCreator.createObjectURL(file.original);
             
-            $("#dataView").append(`<img  style="max-height:500px;margin: 15px auto;display: block;" alt=\"${file.name()}\"src=\"${imageUrl}\">`);
+            $("#dataView").append(`<img style="max-height:500px;margin: 15px auto;display: block;" alt=\"${file.name()}\"src=\"${imageUrl}\">`);
             $("#dataView #fileName").html(`${file.name()}`);
             $("#dataView #fileSize").html(`${file.size()/1000} kb`);
         }
