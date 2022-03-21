@@ -19,7 +19,6 @@ fetch(window.location.origin+'/get-user-ip').then((ip)=>{
 })
 
 $(".headerContainer").on('click', ()=>{
-    console.log("Clicked header!");
     $("#headerContainer").toggle();
     $("#userIpAddr").toggle();
 });
@@ -32,8 +31,6 @@ $(".headerContainer").on('click', ()=>{
 
 function toggleEntryList(path){
     var pathSteps = path.split("/");
-
-    console.log(pathSteps);
 
     var dir = workspaceFiles;
 
@@ -113,7 +110,7 @@ function doForEachFile(dir, handle){
 
 function updateTextData(){
     var text = this.value;
-    /*console.log("Textarea update")*/
+    
     doForEachFile(workspaceFiles, (file)=>{
         if(file.state == EDITING){
             file.original = new File([text], file.name(), {
@@ -133,7 +130,7 @@ function loadFileData(entry, directory, writeFunc){
 
             temp.original = sample;
             temp.isFile = true;
-            temp.path = entry.fullPath;
+            temp.path = directory.path+"/"+entry.name;
 
             directory.files=[...(directory.files || []),temp];
 
@@ -142,7 +139,7 @@ function loadFileData(entry, directory, writeFunc){
     }else if(entry.isDirectory){
         var temp = Object.assign({}, DirectoryStruct);
         temp.directories = {};
-        temp.path = entry.fullPath;
+        temp.path = directory.path+"/"+entry.name;
 
         var reader = entry.createReader();
         reader.readEntries((entries)=>{
@@ -156,17 +153,24 @@ function loadFileData(entry, directory, writeFunc){
     }
 }
 
-function onFileDrop(event){
+function onFileDrop(event, dir_path){
     event.preventDefault();
+    event.stopPropagation();
 
     $("#dropField").hide();
     $("#selection_view").show();
+
+    var default_folder = workspaceFiles;
+    if(dir_path){
+        dir_path = dir_path.split("/");
+        for(let i=1;i<dir_path.length;++i) default_folder = default_folder.directories[dir_path[i]];
+    }
 
     var items = event.dataTransfer.items; 
     for(let i=0; i<items.length; ++i){
         let item = items[i].webkitGetAsEntry();
 
-        loadFileData(item, workspaceFiles, function(){
+        loadFileData(item, default_folder, function(){
             writeLoadedFiles(workspaceFiles, filesListDiv);
         });
     }

@@ -122,7 +122,7 @@ function writeLoadedFiles(directory, list){
 
     Object.keys(directory.directories).forEach((key)=>{
         if(directory.directories[key].isOpen){
-            list.append(`<li onclick=\"toggleEntryList('${directory.directories[key].path}')\">
+            list.append(`<li ondrop="onFileDrop(event, '${directory.directories[key].path}');" ondragover="onDragOver(event, '${directory.directories[key].path}');" onclick=\"toggleEntryList('${directory.directories[key].path}')\">
 							<i class="fa-regular fa-folder-open"></i> ${key}:
                          </li>`);
 
@@ -131,7 +131,7 @@ function writeLoadedFiles(directory, list){
             writeLoadedFiles(directory.directories[key], dirList);
             list.append(dirList);
         }else{
-            list.append(`<li onclick=\"toggleEntryList('${directory.directories[key].path}')\">
+            list.append(`<li ondrop="onFileDrop(event, '${directory.directories[key].path}');" ondragover="onDragOver(event, '${directory.directories[key].path}');" onclick=\"toggleEntryList('${directory.directories[key].path}')\">
 							<i class="fa-solid fa-folder"></i> ${key}:
                          </li>`);
         }
@@ -485,7 +485,7 @@ function deleteFile(path, event){
 	if(dir.files.length == 0){
 		function deleteEmptyFolders(folder, index){
 			if(index > pathSteps.length-2) return;
-			
+
 			let dir_name = pathSteps[index];
 			
 			let current_folder = folder.directories[dir_name];
