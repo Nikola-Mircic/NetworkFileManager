@@ -1,5 +1,3 @@
-'use strict'
-
 //const socket = require("socket.io-client/lib/socket");
 
 var activeUsers = [];
@@ -103,10 +101,18 @@ function writeLoadedFiles(directory, list){
     directory.files.forEach((file)=>{
         let filePath = (file.path=="")?("/"+file.name()):file.path;
         list.append(`<li onclick=\"showData('${filePath}')\">
-                        <div id="fileStats">
-                            <p id="fileName"> <i class="fa-regular fa-file"></i> ${file.name()}</p>
-                            <p id="fileSize">${file.size()/1000} kb</p>
-                        </div>
+						<div id="fileStats">
+							<p id="fileName">
+								<i class="fa-regular fa-file"></i> ${file.name()}</p>
+							<div>
+								<p id="fileSize">
+									${file.size()/1000} kb
+								</p>
+								<button onclick="deleteFile('${filePath}', event)">
+									<i class="fa-solid fa-trash"></i>
+								</button>
+							</div>
+						</div>
                     </li>`);
         
         if(file.state == EDITING){
@@ -461,4 +467,40 @@ function addFileToList(file){
 
 	$("#received").show();
 	$("#data ol").html(htmlData); 
+}
+
+function deleteFile(path, event){
+	event.stopPropagation()
+	
+	var pathSteps = path.split("/");
+
+	var dir = workspaceFiles;
+
+	for(let i=1;i<pathSteps.length-1;++i) dir = dir.directories[pathSteps[i]];
+
+	dir.files = dir.files.filter((file)=>{
+		return file.name() != pathSteps[pathSteps.length-1];
+	});
+
+	if(dir.files.length == 0){
+		function deleteEmptyFolders(folder, index){
+			if(index > pathSteps.length-2) return;
+			
+			let dir_name = pathSteps[index];
+			
+			let current_folder = folder.directories[dir_name];
+
+			if(Object.keys(current_folder.directories).length != 0){
+				deleteEmptyFolders(current_folder, index+1);
+			}
+
+			if(Object.keys(current_folder.directories).length == 0 && current_folder.files.length == 0){
+				delete folder.directories[dir_name];
+			}
+		}
+
+		deleteEmptyFolders(workspaceFiles, 1)
+	}
+
+	writeLoadedFiles(workspaceFiles, filesListDiv)
 }

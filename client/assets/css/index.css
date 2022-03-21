@@ -103,7 +103,28 @@
     max-width: 90%;
 }
 
-#fileStats p{
+#fileStats>div{
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    min-width: 50%;
+}
+
+#fileStats button{
+    font-size: 100%;
+    display: block;
+    position: relative;
+    width: fit-content;
+    height: fit-content;
+    background-color: rgba(0, 0, 0, 0);
+    border: none;
+}
+
+/*#fileStats button:hover{
+    
+}*/
+
+#fileStats>p{
     word-break: break-all;
     white-space: normal;
 }
