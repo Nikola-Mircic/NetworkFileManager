@@ -121,7 +121,7 @@ button:hover {
 	transition-duration: 0.2s;
 	color: rgb(67, 217, 255);
 	background-color: rgb(15, 53, 124);
-	padding: 5px;
+	/*padding: 5px;*/
 	/*font-size: 1.6rem;*/
 }
 
