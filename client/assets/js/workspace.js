@@ -198,6 +198,9 @@ async function onInput(e){
                                         <p id="fileSize">
                                             ${files[i].size/1000} kb
                                         </p>
+                                        <button onclick="downloadFile('${filePath}', event)">
+                                            <i class="fa-solid fa-file-arrow-down"></i>
+                                        </button>
                                         <button onclick="deleteFile('/${files[i].name}', event)">
                                             <i class="fa-solid fa-trash"></i>
                                         </button>
@@ -214,3 +217,86 @@ async function onInput(e){
         workspaceFiles.files=[...(workspaceFiles.files || []),temp];
     }
 }
+
+function deleteFile(path, event){
+	event.stopPropagation()
+	
+	var pathSteps = path.split("/");
+
+	var dir = workspaceFiles;
+
+	for(let i=1;i<pathSteps.length-1;++i) dir = dir.directories[pathSteps[i]];
+
+	dir.files = dir.files.filter((file)=>{
+		return file.name() != pathSteps[pathSteps.length-1];
+	});
+
+	writeLoadedFiles(workspaceFiles, filesListDiv)
+}
+
+async function downloadFile(filePath, e){
+    e.stopPropagation();
+    e.preventDefault();
+
+    var pathSteps = filePath.split("/");
+
+	var dir = workspaceFiles;
+
+	for(let i=1;i<pathSteps.length-1;++i) dir = dir.directories[pathSteps[i]];
+
+	var file = dir.files.filter((file)=>{
+		return file.name() == pathSteps[pathSteps.length-1];
+	})[0];
+
+    file.data((data)=>{
+        var file_blob = new Blob([data], {type:file.type()})
+        saveAs(file_blob, file.name());
+    });
+};
+
+function deleteFolder(folderPath, event){
+    event.stopPropagation()
+
+    var pathSteps = folderPath.split("/");
+
+	var dir = workspaceFiles;
+
+	for(let i=1;i<pathSteps.length-1;++i) dir = dir.directories[pathSteps[i]];
+
+    delete dir.directories[pathSteps[pathSteps.length-1]];
+
+    writeLoadedFiles(workspaceFiles, filesListDiv);
+}
+
+async function downloadFolder(folderPath, e){
+    e.stopPropagation();
+    e.preventDefault();
+
+    var pathSteps = folderPath.split("/");
+
+	var dir = workspaceFiles;
+
+	for(let i=1;i<pathSteps.length;++i) {
+        if(pathSteps[i] != "") 
+            pathdir = dir.directories[pathSteps[i]];
+    }
+    
+    var zip = new JSZip();
+    console.log("Zipping ");
+    console.log(dir);
+    var files = extractFiles(dir);
+    console.log(files);
+    for(var fileIdx in files){
+    	let file = files[fileIdx];
+        let file_data = await file.data();
+    	var blob = new Blob([file_data],
+							 {type: file.type()});
+    	zip.file(file.path.substring(1), file.name(), blob);
+    	console.log(`Zipped : ${file.name()}`);
+    }
+	
+	zip.generateAsync({type:"blob"})
+		.then(function(content) {
+		    saveAs(content, "download.zip");
+		});
+};

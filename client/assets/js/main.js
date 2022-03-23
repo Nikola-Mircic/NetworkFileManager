@@ -103,11 +103,15 @@ function writeLoadedFiles(directory, list){
         list.append(`<li onclick=\"showData('${filePath}')\">
 						<div id="fileStats">
 							<p id="fileName">
-								<i class="fa-regular fa-file"></i> ${file.name()}</p>
-							<div>
-								<p id="fileSize">
-									${file.size()/1000} kb
-								</p>
+								<i class="fa-regular fa-file"></i> ${file.name()}
+							</p>
+							<p id="fileSize">
+								${file.size()/1000} kb
+							</p>
+							<div class="buttonSet" id="btn_set_${filePath}">
+								<button onclick="downloadFile('${filePath}', event)">
+									<i class="fa-solid fa-file-arrow-down"></i>
+								</button>
 								<button onclick="deleteFile('${filePath}', event)">
 									<i class="fa-solid fa-trash"></i>
 								</button>
@@ -122,8 +126,16 @@ function writeLoadedFiles(directory, list){
 
     Object.keys(directory.directories).forEach((key)=>{
         if(directory.directories[key].isOpen){
-            list.append(`<li ondrop="onFileDrop(event, '${directory.directories[key].path}');" ondragover="onDragOver(event, '${directory.directories[key].path}');" onclick=\"toggleEntryList('${directory.directories[key].path}')\">
-							<i class="fa-regular fa-folder-open"></i> ${key}:
+            list.append(`<li class="folderStats" ondrop="onFileDrop(event, '${directory.directories[key].path}');" ondragover="onDragOver(event, '${directory.directories[key].path}');" onclick=\"toggleEntryList('${directory.directories[key].path}')\">
+							<p><i class="fa-solid fa-folder"></i> ${key}:</p>
+							<div class="buttonSet">
+								<button onclick="downloadFolder('${directory.directories[key].path}', event)">
+									<i class="fa-solid fa-file-arrow-down"></i>
+								</button>
+								<button onclick="deleteFolder('${directory.directories[key].path}', event)">
+									<i class="fa-solid fa-trash"></i>
+								</button>
+							</div>
                          </li>`);
 
             var dirList = $(`<ul id="${key}_data"></ul>`);
@@ -131,8 +143,16 @@ function writeLoadedFiles(directory, list){
             writeLoadedFiles(directory.directories[key], dirList);
             list.append(dirList);
         }else{
-            list.append(`<li ondrop="onFileDrop(event, '${directory.directories[key].path}');" ondragover="onDragOver(event, '${directory.directories[key].path}');" onclick=\"toggleEntryList('${directory.directories[key].path}')\">
-							<i class="fa-solid fa-folder"></i> ${key}:
+            list.append(`<li class="folderStats" ondrop="onFileDrop(event, '${directory.directories[key].path}');" ondragover="onDragOver(event, '${directory.directories[key].path}');" onclick=\"toggleEntryList('${directory.directories[key].path}')\">
+							<p><i class="fa-solid fa-folder"></i> ${key}:</p>
+							<div class="buttonSet">
+								<button onclick="downloadFolder('${directory.directories[key].path}', event)">
+									<i class="fa-solid fa-file-arrow-down"></i>
+								</button>
+								<button onclick="deleteFolder('${directory.directories[key].path}', event)">
+									<i class="fa-solid fa-trash"></i>
+								</button>
+							</div>
                          </li>`);
         }
     });
@@ -355,31 +375,6 @@ function extractFiles(dir){
 	return dirFiles;
 }
 
-$("#received button").on('click', function(e){
-    e.preventDefault();
-
-    if(received.length == 0)
-    	return;
-
-    if(received.length == 1)
-    	saveAs(received[0].data,received[0].name);
-
-    var zip = new JSZip();
-
-    for(var fileName of Object.keys(receivedFiles)){
-    	let file = receivedFiles[fileName];
-    	var blob = new Blob([file.data],
-							 {type: file.type});
-    	zip.file(file.name, blob);
-    	console.log(`Zipped : ${file.name}`);
-    }
-	
-	zip.generateAsync({type:"blob"})
-		.then(function(content) {
-		    saveAs(content, "download.zip");
-		});
-});
-
 function registerUser(){
 	if(socket.disconnected)
 		socket.connect();
@@ -469,38 +464,3 @@ function addFileToList(file){
 	$("#data ol").html(htmlData); 
 }
 
-function deleteFile(path, event){
-	event.stopPropagation()
-	
-	var pathSteps = path.split("/");
-
-	var dir = workspaceFiles;
-
-	for(let i=1;i<pathSteps.length-1;++i) dir = dir.directories[pathSteps[i]];
-
-	dir.files = dir.files.filter((file)=>{
-		return file.name() != pathSteps[pathSteps.length-1];
-	});
-
-	if(dir.files.length == 0){
-		function deleteEmptyFolders(folder, index){
-			if(index > pathSteps.length-2) return;
-
-			let dir_name = pathSteps[index];
-			
-			let current_folder = folder.directories[dir_name];
-
-			if(Object.keys(current_folder.directories).length != 0){
-				deleteEmptyFolders(current_folder, index+1);
-			}
-
-			if(Object.keys(current_folder.directories).length == 0 && current_folder.files.length == 0){
-				delete folder.directories[dir_name];
-			}
-		}
-
-		deleteEmptyFolders(workspaceFiles, 1)
-	}
-
-	writeLoadedFiles(workspaceFiles, filesListDiv)
-}
