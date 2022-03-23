@@ -1,5 +1,3 @@
-'use strict'
-
 //const socket = require("socket.io-client/lib/socket");
 
 var activeUsers = [];
@@ -103,10 +101,22 @@ function writeLoadedFiles(directory, list){
     directory.files.forEach((file)=>{
         let filePath = (file.path=="")?("/"+file.name()):file.path;
         list.append(`<li onclick=\"showData('${filePath}')\">
-                        <div id="fileStats">
-                            <p id="fileName"> <i class="fa-regular fa-file"></i> ${file.name()}</p>
-                            <p id="fileSize">${file.size()/1000} kb</p>
-                        </div>
+						<div id="fileStats">
+							<p id="fileName">
+								<i class="fa-regular fa-file"></i> ${file.name()}
+							</p>
+							<p id="fileSize">
+								${file.size()/1000} kb
+							</p>
+							<div class="buttonSet" id="btn_set_${filePath}">
+								<button onclick="downloadFile('${filePath}', event)">
+									<i class="fa-solid fa-file-arrow-down"></i>
+								</button>
+								<button onclick="deleteFile('${filePath}', event)">
+									<i class="fa-solid fa-trash"></i>
+								</button>
+							</div>
+						</div>
                     </li>`);
         
         if(file.state == EDITING){
@@ -116,8 +126,16 @@ function writeLoadedFiles(directory, list){
 
     Object.keys(directory.directories).forEach((key)=>{
         if(directory.directories[key].isOpen){
-            list.append(`<li onclick=\"toggleEntryList('${directory.directories[key].path}')\">
-							<i class="fa-regular fa-folder-open"></i> ${key}:
+            list.append(`<li class="folderStats" ondrop="onFileDrop(event, '${directory.directories[key].path}');" ondragover="onDragOver(event, '${directory.directories[key].path}');" onclick=\"toggleEntryList('${directory.directories[key].path}')\">
+							<p><i class="fa-solid fa-folder"></i> ${key}:</p>
+							<div class="buttonSet">
+								<button onclick="downloadFolder('${directory.directories[key].path}', event)">
+									<i class="fa-solid fa-file-arrow-down"></i>
+								</button>
+								<button onclick="deleteFolder('${directory.directories[key].path}', event)">
+									<i class="fa-solid fa-trash"></i>
+								</button>
+							</div>
                          </li>`);
 
             var dirList = $(`<ul id="${key}_data"></ul>`);
@@ -125,8 +143,16 @@ function writeLoadedFiles(directory, list){
             writeLoadedFiles(directory.directories[key], dirList);
             list.append(dirList);
         }else{
-            list.append(`<li onclick=\"toggleEntryList('${directory.directories[key].path}')\">
-							<i class="fa-solid fa-folder"></i> ${key}:
+            list.append(`<li class="folderStats" ondrop="onFileDrop(event, '${directory.directories[key].path}');" ondragover="onDragOver(event, '${directory.directories[key].path}');" onclick=\"toggleEntryList('${directory.directories[key].path}')\">
+							<p><i class="fa-solid fa-folder"></i> ${key}:</p>
+							<div class="buttonSet">
+								<button onclick="downloadFolder('${directory.directories[key].path}', event)">
+									<i class="fa-solid fa-file-arrow-down"></i>
+								</button>
+								<button onclick="deleteFolder('${directory.directories[key].path}', event)">
+									<i class="fa-solid fa-trash"></i>
+								</button>
+							</div>
                          </li>`);
         }
     });
@@ -349,31 +375,6 @@ function extractFiles(dir){
 	return dirFiles;
 }
 
-$("#received button").on('click', function(e){
-    e.preventDefault();
-
-    if(received.length == 0)
-    	return;
-
-    if(received.length == 1)
-    	saveAs(received[0].data,received[0].name);
-
-    var zip = new JSZip();
-
-    for(var fileName of Object.keys(receivedFiles)){
-    	let file = receivedFiles[fileName];
-    	var blob = new Blob([file.data],
-							 {type: file.type});
-    	zip.file(file.name, blob);
-    	console.log(`Zipped : ${file.name}`);
-    }
-	
-	zip.generateAsync({type:"blob"})
-		.then(function(content) {
-		    saveAs(content, "download.zip");
-		});
-});
-
 function registerUser(){
 	if(socket.disconnected)
 		socket.connect();
@@ -462,3 +463,4 @@ function addFileToList(file){
 	$("#received").show();
 	$("#data ol").html(htmlData); 
 }
+
