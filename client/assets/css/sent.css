@@ -1,0 +1,25 @@
+#users{
+    display:grid;
+    grid-template-columns: auto;
+    width: 90%;
+    min-height: 30px;
+    padding: 2px;
+    margin: 20px auto;
+    background-color: rgba(255, 255, 255, 0.438);
+}
+
+.user-card{
+    background-color: rgba(255, 255, 255, 0.5);
+    padding-top: 0.5em;
+    padding-left: 1em;
+    text-align: left;
+    border: 2px solid rgba(0, 0, 255, 0.438);
+}
+
+.user-card:hover {
+	transition-duration: 0.2s;
+	color: rgb(67, 217, 255);
+	background-color: rgb(15, 53, 124);
+    padding-top: 0.5em;
+    padding-left: 1em;
+}

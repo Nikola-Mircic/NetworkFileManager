@@ -3,7 +3,6 @@
 <head>
 	<title>Network file manager</title>
 	<link rel="stylesheet" type="text/css" href="./assets/css/main.css">
-	<link rel="stylesheet" type="text/css" href="./assets/css/index.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -21,8 +20,11 @@
 </head>
 <body>
 	<div id="header">
-		<div id="headerContainer">
+		<div id="headerContainer" class="headerContainer">
 			<h1 id="headerText">Network file manager</h1>
+		</div>
+		<div id="userIpAddr" class="headerContainer" style="display: none;">
+			<h6>Your IPv4: <span id="ipv4">192.168.1.9</span></h6>
 		</div>
 		<div id="register" class="profileField">
 			<input type="text" name="userName" id="userName" placeholder=" Enter your name / ID">
@@ -36,8 +38,8 @@
 	</div>
 	<nav class="nav">
 		<li><a onclick="redirect('/');"><button active>Workspace</button></a></li>
+		<li><a onclick="redirect('/sent');"><button>Send</button></a></li>
 		<li><a onclick="redirect('/received');"><button>Received</button></a></li>
-		<li><a onclick="redirect('/sent');"><button>Sent</button></a></li>
 	</nav>
 
 	<div id="workspace">
@@ -51,7 +53,8 @@
 			</div>
 			<div id="selection_view" style="display: none;">
 				<div>
-					<button onclick="document.getElementById('file').click();">Select files</button>
+					<button onclick="document.getElementById('file').click();"><p>Select files</p></button>
+					<button onclick="downloadFolder('/', event);"><p>Download all</p></button>
 				</div>
 				<ul id="selectedFiles">
 	

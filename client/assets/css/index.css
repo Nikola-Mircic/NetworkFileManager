@@ -40,6 +40,7 @@
     left: 50%;
     bottom: 15%;
     transform: translateX(-50%);
+    font-size: 100%;
 }
 
 #selection_view{
@@ -58,13 +59,18 @@
     margin: 5px auto 15px auto;
 }
 
-#selection_view button{
-    position: absolute;
-    display: block;
+#selection_view>div{
+    display: flex;
+    justify-content: space-around;
     width: 100%;
+}
+
+#selection_view>div>button{
+    width: fit-content;
     height: fit-content;
     font-size: 135%;
-    border: 2px solid rgba(16, 14, 54, 0.9);;
+    border: 2px solid rgba(16, 14, 54, 0.9);
+    min-width: 25%;
 }
 
 #selectedFiles{
@@ -74,9 +80,8 @@
 
 #selectedFiles li{
     max-width: 100%;
-    padding-left: 0.1em;
+    padding: 0.1em 0.5em;
     list-style: none;
-    margin-bottom: 7px;
 }
 
 #selectedFiles li:hover{
@@ -94,7 +99,7 @@
     width: 100%;
 }
 
-#fileStats{
+#fileStats, .folderStats{
     position: relative;
     margin: 5px auto;
     display: flex;
@@ -103,7 +108,39 @@
     max-width: 90%;
 }
 
-#fileStats p{
+/*#fileStats .fileControl{
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    min-width: 50%;
+}*/
+
+#fileStats div{
+    display: flex;
+}
+
+#fileStats .buttonSet, .folderStats .buttonSet{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    min-width: 20%; 
+}
+
+#fileStats button, .folderStats button{
+    font-size: 100%;
+    display: block;
+    position: relative;
+    width: fit-content;
+    height: fit-content;
+    background-color: rgba(0, 0, 0, 0);
+    border: none;
+}
+
+/*#fileStats button:hover{
+    
+}*/
+
+#fileStats>p, .folderStats>p{
     word-break: break-all;
     white-space: normal;
 }

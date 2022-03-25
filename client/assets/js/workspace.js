@@ -10,10 +10,27 @@ if(workspaceFiles && ( Object.keys(workspaceFiles.directories).length>0 || works
     writeLoadedFiles(workspaceFiles, filesListDiv);
 }
 
+fetch(window.location.origin+'/get-user-ip').then((ip)=>{
+    if(!ip) return;
+
+    ip.text().then((value)=>{
+        $("#ipv4").html(value);
+    });
+})
+
+$(".headerContainer").on('click', ()=>{
+    $("#headerContainer").toggle();
+    $("#userIpAddr").toggle();
+});
+
+(function(){
+    var head = $("head");
+    var link = $("<link rel='stylesheet' type='text/css' href='./assets/css/index.css'>");
+    head.append(link);
+})();
+
 function toggleEntryList(path){
     var pathSteps = path.split("/");
-
-    console.log(pathSteps);
 
     var dir = workspaceFiles;
 
@@ -60,20 +77,22 @@ function showData(path){
         if(file.type().split("/")[0] == "text"){
             data = String.fromCharCode.apply(null, data);
 
-            var t = $("<textarea></textarea>");
+            var t = $(`<textarea id="file_${file.name()}"></textarea>`);
             t.val(data);
 
             $("#dataView").append(t);
-            $("#dataView #fileName").html(`${file.name()}`);
+            $("#dataView #fileName").html(file.name());
             $("#dataView #fileSize").html(`${file.size()/1000} kb`);
 
             $("textarea").on('change keyup paste', updateTextData);
+
+            document.getElementById("dataView").scrollIntoView();
         }
         if(file.type().split("/")[0] == "image"){
             var urlCreator = window.URL || window.webkitURL;
             var imageUrl = urlCreator.createObjectURL(file.original);
             
-            $("#dataView").append(`<img width="100%" alt=\"${file.name()}\"src=\"${imageUrl}\">`);
+            $("#dataView").append(`<img style="max-height:500px;margin: 15px auto;display: block;" alt=\"${file.name()}\"src=\"${imageUrl}\">`);
             $("#dataView #fileName").html(`${file.name()}`);
             $("#dataView #fileSize").html(`${file.size()/1000} kb`);
         }
@@ -91,7 +110,7 @@ function doForEachFile(dir, handle){
 
 function updateTextData(){
     var text = this.value;
-    /*console.log("Textarea update")*/
+    
     doForEachFile(workspaceFiles, (file)=>{
         if(file.state == EDITING){
             file.original = new File([text], file.name(), {
@@ -111,7 +130,7 @@ function loadFileData(entry, directory, writeFunc){
 
             temp.original = sample;
             temp.isFile = true;
-            temp.path = entry.fullPath;
+            temp.path = directory.path+"/"+entry.name;
 
             directory.files=[...(directory.files || []),temp];
 
@@ -120,7 +139,7 @@ function loadFileData(entry, directory, writeFunc){
     }else if(entry.isDirectory){
         var temp = Object.assign({}, DirectoryStruct);
         temp.directories = {};
-        temp.path = entry.fullPath;
+        temp.path = directory.path+"/"+entry.name;
 
         var reader = entry.createReader();
         reader.readEntries((entries)=>{
@@ -134,17 +153,24 @@ function loadFileData(entry, directory, writeFunc){
     }
 }
 
-function onFileDrop(event){
+function onFileDrop(event, dir_path){
     event.preventDefault();
+    event.stopPropagation();
 
     $("#dropField").hide();
     $("#selection_view").show();
+
+    var default_folder = workspaceFiles;
+    if(dir_path){
+        dir_path = dir_path.split("/");
+        for(let i=1;i<dir_path.length;++i) default_folder = default_folder.directories[dir_path[i]];
+    }
 
     var items = event.dataTransfer.items; 
     for(let i=0; i<items.length; ++i){
         let item = items[i].webkitGetAsEntry();
 
-        loadFileData(item, workspaceFiles, function(){
+        loadFileData(item, default_folder, function(){
             writeLoadedFiles(workspaceFiles, filesListDiv);
         });
     }
@@ -166,8 +192,19 @@ async function onInput(e){
     for(let i=0;i<files.length;++i){
         filesListDiv.append(`<li onclick=\"showData('/${files[i].name}')\">
                                 <div id="fileStats">
-                                    <p id="fileName"> <i class="fa-regular fa-file"></i> ${files[i].name}</p>
-                                    <p id="fileSize">${files[i].size/1000} kb</p>
+                                    <p id="fileName">
+                                        <i class="fa-regular fa-file"></i> ${files[i].name}</p>
+                                    <div>
+                                        <p id="fileSize">
+                                            ${files[i].size/1000} kb
+                                        </p>
+                                        <button onclick="downloadFile('${filePath}', event)">
+                                            <i class="fa-solid fa-file-arrow-down"></i>
+                                        </button>
+                                        <button onclick="deleteFile('/${files[i].name}', event)">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </li>`);
 
@@ -180,3 +217,86 @@ async function onInput(e){
         workspaceFiles.files=[...(workspaceFiles.files || []),temp];
     }
 }
+
+function deleteFile(path, event){
+	event.stopPropagation()
+	
+	var pathSteps = path.split("/");
+
+	var dir = workspaceFiles;
+
+	for(let i=1;i<pathSteps.length-1;++i) dir = dir.directories[pathSteps[i]];
+
+	dir.files = dir.files.filter((file)=>{
+		return file.name() != pathSteps[pathSteps.length-1];
+	});
+
+	writeLoadedFiles(workspaceFiles, filesListDiv)
+}
+
+async function downloadFile(filePath, e){
+    e.stopPropagation();
+    e.preventDefault();
+
+    var pathSteps = filePath.split("/");
+
+	var dir = workspaceFiles;
+
+	for(let i=1;i<pathSteps.length-1;++i) dir = dir.directories[pathSteps[i]];
+
+	var file = dir.files.filter((file)=>{
+		return file.name() == pathSteps[pathSteps.length-1];
+	})[0];
+
+    file.data((data)=>{
+        var file_blob = new Blob([data], {type:file.type()})
+        saveAs(file_blob, file.name());
+    });
+};
+
+function deleteFolder(folderPath, event){
+    event.stopPropagation()
+
+    var pathSteps = folderPath.split("/");
+
+	var dir = workspaceFiles;
+
+	for(let i=1;i<pathSteps.length-1;++i) dir = dir.directories[pathSteps[i]];
+
+    delete dir.directories[pathSteps[pathSteps.length-1]];
+
+    writeLoadedFiles(workspaceFiles, filesListDiv);
+}
+
+async function downloadFolder(folderPath, e){
+    e.stopPropagation();
+    e.preventDefault();
+
+    var pathSteps = folderPath.split("/");
+
+	var dir = workspaceFiles;
+
+	for(let i=1;i<pathSteps.length;++i) {
+        if(pathSteps[i] != "") 
+            pathdir = dir.directories[pathSteps[i]];
+    }
+    
+    var zip = new JSZip();
+    console.log("Zipping ");
+    console.log(dir);
+    var files = extractFiles(dir);
+    console.log(files);
+    for(var fileIdx in files){
+    	let file = files[fileIdx];
+        let file_data = await file.data();
+    	var blob = new Blob([file_data],
+							 {type: file.type()});
+    	zip.file(file.path.substring(1), file.name(), blob);
+    	console.log(`Zipped : ${file.name()}`);
+    }
+	
+	zip.generateAsync({type:"blob"})
+		.then(function(content) {
+		    saveAs(content, "download.zip");
+		});
+};

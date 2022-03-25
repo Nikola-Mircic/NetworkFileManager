@@ -1,4 +1,4 @@
-'use strict'
+//const socket = require("socket.io-client/lib/socket");
 
 var activeUsers = [];
 var receivedFiles = {};
@@ -68,8 +68,6 @@ var workspaceFiles =  Object.assign({}, DirectoryStruct); // Directory where use
 var sentFiles =  Object.assign({}, DirectoryStruct); // Directory where sent files and directories are stored
 var receivedFiles =  Object.assign({}, DirectoryStruct); // Directory where received files and directories are stored
 
-window.sessionStorage.setItem("files", JSON.stringify(workspaceFiles));
-
 const chunkSize = 400000;
 
 function redirect(path){
@@ -103,10 +101,22 @@ function writeLoadedFiles(directory, list){
     directory.files.forEach((file)=>{
         let filePath = (file.path=="")?("/"+file.name()):file.path;
         list.append(`<li onclick=\"showData('${filePath}')\">
-                        <div id="fileStats">
-                            <p id="fileName"> <i class="fa-regular fa-file"></i> ${file.name()}</p>
-                            <p id="fileSize">${file.size()/1000} kb</p>
-                        </div>
+						<div id="fileStats">
+							<p id="fileName">
+								<i class="fa-regular fa-file"></i> ${file.name()}
+							</p>
+							<p id="fileSize">
+								${file.size()/1000} kb
+							</p>
+							<div class="buttonSet" id="btn_set_${filePath}">
+								<button onclick="downloadFile('${filePath}', event)">
+									<i class="fa-solid fa-file-arrow-down"></i>
+								</button>
+								<button onclick="deleteFile('${filePath}', event)">
+									<i class="fa-solid fa-trash"></i>
+								</button>
+							</div>
+						</div>
                     </li>`);
         
         if(file.state == EDITING){
@@ -116,8 +126,16 @@ function writeLoadedFiles(directory, list){
 
     Object.keys(directory.directories).forEach((key)=>{
         if(directory.directories[key].isOpen){
-            list.append(`<li onclick=\"toggleEntryList('${directory.directories[key].path}')\">
-							<i class="fa-regular fa-folder-open"></i> ${key}:
+            list.append(`<li class="folderStats" ondrop="onFileDrop(event, '${directory.directories[key].path}');" ondragover="onDragOver(event, '${directory.directories[key].path}');" onclick=\"toggleEntryList('${directory.directories[key].path}')\">
+							<p><i class="fa-solid fa-folder"></i> ${key}:</p>
+							<div class="buttonSet">
+								<button onclick="downloadFolder('${directory.directories[key].path}', event)">
+									<i class="fa-solid fa-file-arrow-down"></i>
+								</button>
+								<button onclick="deleteFolder('${directory.directories[key].path}', event)">
+									<i class="fa-solid fa-trash"></i>
+								</button>
+							</div>
                          </li>`);
 
             var dirList = $(`<ul id="${key}_data"></ul>`);
@@ -125,20 +143,27 @@ function writeLoadedFiles(directory, list){
             writeLoadedFiles(directory.directories[key], dirList);
             list.append(dirList);
         }else{
-            list.append(`<li onclick=\"toggleEntryList('${directory.directories[key].path}')\">
-							<i class="fa-solid fa-folder"></i> ${key}:
+            list.append(`<li class="folderStats" ondrop="onFileDrop(event, '${directory.directories[key].path}');" ondragover="onDragOver(event, '${directory.directories[key].path}');" onclick=\"toggleEntryList('${directory.directories[key].path}')\">
+							<p><i class="fa-solid fa-folder"></i> ${key}:</p>
+							<div class="buttonSet">
+								<button onclick="downloadFolder('${directory.directories[key].path}', event)">
+									<i class="fa-solid fa-file-arrow-down"></i>
+								</button>
+								<button onclick="deleteFolder('${directory.directories[key].path}', event)">
+									<i class="fa-solid fa-trash"></i>
+								</button>
+							</div>
                          </li>`);
         }
     });
 };
 
 socket.on('newUser',function(data){
-	$("users").show();
-	console.log(activeUsers);
 	if(activeUsers.map((user)=>user.id).indexOf(data.id) === -1)
 		activeUsers[activeUsers.length] = data;
-	console.log(activeUsers);
-	showUsers();
+
+	if(typeof(onUsersUpdate) !== 'undefined')
+		onUsersUpdate();
 });
 
 socket.on('removeUser', function(data){
@@ -146,17 +171,19 @@ socket.on('removeUser', function(data){
 		return val.id != data.id;
 	});
 
-	showUsers();
+	if(typeof(onUsersUpdate) !== 'undefined')
+		onUsersUpdate();
 });
 
 socket.on("start-transfer",function(data){
-	$(".progress").show();
 	receivedSize = 0;
 	console.log(data);
 	packageSize = data.info.size;
 
 	data.info.files.forEach((file)=>{
-		receivedFiles[file.name] = {
+		if(receivedFiles[""+file.name])
+			console.log("Rewriting file");
+		receivedFiles[""+file.name] = {
 			data: new Uint8Array(),
 			type: "",
 			fileSize: file.fileSize
@@ -164,7 +191,7 @@ socket.on("start-transfer",function(data){
 	})
 })
 
-socket.on('data',async function(data){
+socket.on('data',function(data){
 	console.log(data);
 	var fileName = data.file.name;
 	if(receivedFiles[fileName]){
@@ -209,7 +236,7 @@ function insertFile(file){
     for(let i=1; i<pathSteps.length-1; ++i){
 		pathPassed += pathSteps[i];
 		if(!dir.directories[pathSteps[i]]){
-			console.log(`Folder ${pathSteps[i]} doesn't exists`);
+			console.log(`Folder "${pathSteps[i]}" doesn't exists`);
 			var newDir = Object.assign({}, DirectoryStruct);
 			newDir.directories = {};
 			newDir.path = pathPassed;
@@ -224,6 +251,10 @@ function insertFile(file){
 }
 
 socket.on('request data',async function(data){
+	console.log("==================================");
+	console.log('Requested Data');
+	console.log('data');
+	console.log("==================================");
 	var fileToSent = null;
 	for(let i=0; i<selectedFiles.length; ++i){
 		if((selectedFiles[i].chunks == 0) || 
@@ -268,6 +299,7 @@ socket.on('request data',async function(data){
 
 socket.on("transfer end",function(data){
 	setTimeout(function() {$(".progress").hide();}, 1000);
+	receivedFiles = {};
 });
 
 async function sendToUser(name, id){
@@ -344,31 +376,6 @@ function extractFiles(dir){
 	return dirFiles;
 }
 
-$("#received button").on('click', function(e){
-    e.preventDefault();
-
-    if(received.length == 0)
-    	return;
-
-    if(received.length == 1)
-    	saveAs(received[0].data,received[0].name);
-
-    var zip = new JSZip();
-
-    for(var fileName of Object.keys(receivedFiles)){
-    	let file = receivedFiles[fileName];
-    	var blob = new Blob([file.data],
-							 {type: file.type});
-    	zip.file(file.name, blob);
-    	console.log(`Zipped : ${file.name}`);
-    }
-	
-	zip.generateAsync({type:"blob"})
-		.then(function(content) {
-		    saveAs(content, "download.zip");
-		});
-});
-
 function registerUser(){
 	if(socket.disconnected)
 		socket.connect();
@@ -411,7 +418,7 @@ function updateUser(username){
 
 updateUser(window.sessionStorage.getItem("username"));
 
-function showUsers(){
+/*function showUsers(){
 	if(activeUsers.length > 0){
 		$("#users").show();
 	}else{
@@ -431,7 +438,7 @@ function showUsers(){
 	});
 
 	$("#users").html(data);
-}
+}*/
 
 function extractFileName(fullPath){
 	if (fullPath) {
@@ -457,3 +464,4 @@ function addFileToList(file){
 	$("#received").show();
 	$("#data ol").html(htmlData); 
 }
+

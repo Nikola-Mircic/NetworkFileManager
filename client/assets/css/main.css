@@ -2,7 +2,6 @@
     margin: 0;
     border: 0;
     outline: 0;
-    font-size: 100%;
     vertical-align: baseline;
 }
 
@@ -36,7 +35,7 @@ body{
 	margin: 0 auto;
 }
 
-#headerContainer{
+.headerContainer{
 	display: block;
 	width:50%;
 	min-width: 500px;
@@ -47,10 +46,10 @@ body{
 	vertical-align: middle;
 }
 
-#header h1{
+#header h1, #header h6{
 	color: rgba(16, 14, 54);
 	background-color: #eeeeee55;
-	font-size: 42px;
+	font-size: 230%;
 	font-weight: 5px;
 	font-family: 'Times New Roman', Times, serif;
 	border: 2px solid #202020;
@@ -58,6 +57,10 @@ body{
 	padding-bottom: 0.2rem;
 	margin-top: 0.3rem;
 	margin-bottom: 0.3rem;
+}
+
+#header h6 span{
+	color: white;
 }
 
 .profileField {
@@ -77,11 +80,12 @@ body{
 	display: flexbox;
 	margin: auto;
 	background-color: rgba(255, 255, 255, 0.438);
-	border-radius: 5%;
+	border-radius: 5px;
 	width: 60%;
 	min-width: 230px;
 	height: 90%;
 	text-align: center;
+	font-size: 100%;
 }
 
 #profile h3 {
@@ -100,10 +104,11 @@ body{
 .profileField button {
 	display: flexbox;
 	margin: auto;
-	border-radius: 5%;
+	border-radius: 5px;
 	width: 35%;
 	min-width: 150px;
 	height: 90%;
+	font-size: 100%;
 }
 
 button{
@@ -116,7 +121,7 @@ button:hover {
 	transition-duration: 0.2s;
 	color: rgb(67, 217, 255);
 	background-color: rgb(15, 53, 124);
-	padding: 5px;
+	/*padding: 5px;*/
 	/*font-size: 1.6rem;*/
 }
 
@@ -202,18 +207,6 @@ button:hover {
 	min-height: 50px;
 }
 
-#selectedFiles h3{
-	margin: 15px 0 15px 15px;
-}
-
-#selectedFiles ol{
-	margin-left: 5%;
-}
-
-#selectedFiles ol li{
-	margin: 5px 0 5px 0;
-}
-
 #received h3{
 	margin: 15px 0 15px 15px;
 }
@@ -227,23 +220,6 @@ button:hover {
 	margin: 5px 0 5px 0;
 }
 
-#users h3 {
-	margin-left: 10%;
-	margin-top: 5px;
-	font-size: 150%
-}
-
-#users button{
-	display: inline-block;
-	position: relative;
-	margin: 10px 10% 10px 10%;
-	width: 80%;
-	height: 40px;
-	background-color: rgb(200,220,255);
-	border-radius: 10px;
-	font-size: 200%;
-}
-
 .button{
 	display: block;
 	position: relative;
@@ -255,37 +231,13 @@ button:hover {
 	text-align: center;
 }
 
-.profileField button.button, #users button.button, input[type="button"], input[type="submit"].formFileInput {
+.profileField button.button, input[type="button"], input[type="submit"].formFileInput {
 	transition-duration: 1s;
   	cursor: pointer;
 }
 
-.profileField button.button:hover, #users button.button:hover, input[type="button"]:hover, input[type="submit"]:hover {
+.profileField button.button:hover, input[type="button"]:hover, input[type="submit"]:hover {
 	background-color: rgb(150,170,205);
-}
-
-.progress {
-	display: none;
-	background-color: #a0e8de;
-	border-radius: 15px;
-	position: relative;
-	margin: 15px 30% 15px 30%;
-	height: 30px;
-	width: 40%;
-}
-
-.progress-done {
-	background: #0961ad;
-	box-shadow: 0 3px 3px -5px #04294a, 0 2px 5px #04294a;
-	border-radius: 15px;
-	color: #fff;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	height: 100%;
-	width: 0;
-	opacity: 0;
-	transition: 0.5s linear;
 }
 
 i{
