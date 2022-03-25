@@ -2,7 +2,8 @@ const socketIO = require('socket.io');
 
 const fs = require('fs');
 
-const IORouter = require('./routing/IORouter');
+const IORouterModule = require('./routing/IORouter');
+const IORouter = new IORouterModule();
 const app = require('./routing/PathRouter')(saveFile, saveLogData, __dirname);
 
 const readline = require("readline");
@@ -17,7 +18,6 @@ var available_adresses = getLocalAddressList();
 var IP = "localhost";
 
 const LogSystem = require("./logsystem.js");
-const { wirte_log } = require('./routing/IORouter');
 const Log = new LogSystem();
 const LOG_PATH = __dirname+"/db/logs/log_history.dat";
 

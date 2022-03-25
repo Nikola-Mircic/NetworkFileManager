@@ -236,6 +236,7 @@ socket.on('request data',async function(data){
 
 	if(fileToSent == null){
 		socket.emit("transfer end",data);
+		alert("Data is sent!");
 		setTimeout(function() {$(".progress").hide();}, 1000);
 		return;
 	}

@@ -1,15 +1,18 @@
-const IORouter = {
-    save_files: true,
-    wirte_log: false,
+var IORouter = function(){
+    this.save_files =  true;
+    this.wirte_log = false;
     
-    getRouter: function(setup){
-        var newRouter = Object.assign({}, IORouter);
+    this.getRouter = (setup)=>{
+        var newRouter = new IORouter();
+        console.log(setup);
         newRouter.save_files = setup.save_files;
-        newRouter.wirte_log = setup.wirte_log;
+        newRouter.write_log = setup.write_log;
+        console.log(newRouter.save_files +" "+ setup.save_files);
+        console.log(newRouter.write_log +" "+ setup.write_log);
         return newRouter;
-    },
+    };
 
-    listen: function(io, saveFile, saveLogData){
+    this.listen = function(io, saveFile, saveLogData){
         var startTime = 0;
         var regUser = [];
 
@@ -55,7 +58,8 @@ const IORouter = {
         
             socket.on("transfer end",(data)=>{
                 var date = new Date();
-                if(this.wirte_log){
+                console.log("Transfer ended! Write log: "+this.write_log);
+                if(this.write_log){
                     saveLogData(`${data.from}-${data.receiver}`,
                             data.file,
                             data.from);
