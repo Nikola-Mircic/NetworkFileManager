@@ -278,7 +278,7 @@ async function downloadFolder(folderPath, e){
 
 	for(let i=1;i<pathSteps.length;++i) {
         if(pathSteps[i] != "") 
-            pathdir = dir.directories[pathSteps[i]];
+            dir = dir.directories[pathSteps[i]];
     }
     
     var zip = new JSZip();
