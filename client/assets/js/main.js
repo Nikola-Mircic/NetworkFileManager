@@ -412,7 +412,7 @@ function updateUser(username){
 	if(!username)
 		$("#profileName").html("");
 	else
-		$("#profileName").html(username);
+		$("#profileName").html(`${username}`);
 	window.sessionStorage.setItem("username", username);
 }
 
