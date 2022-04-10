@@ -198,7 +198,7 @@ async function onInput(e){
                                         <p id="fileSize">
                                             ${files[i].size/1000} kb
                                         </p>
-                                        <button onclick="downloadFile('${filePath}', event)">
+                                        <button onclick="downloadFile('/${files[i].name}', event)">
                                             <i class="fa-solid fa-file-arrow-down"></i>
                                         </button>
                                         <button onclick="deleteFile('/${files[i].name}', event)">
