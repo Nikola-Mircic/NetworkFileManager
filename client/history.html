@@ -18,11 +18,14 @@
 </head>
 <body>
 	<div id="header">
-		<div id="headerContainer">
+		<div id="headerContainer" class="headerContainer">
 			<h1 id="headerText">Network file manager</h1>
 		</div>
+		<div id="userIpAddr" class="headerContainer" style="display: none;">
+			<h6>Your IPv4: <span id="ipv4">192.168.1.9</span></h6>
+		</div>
 		<div id="register" class="profileField">
-			<input type="text" name="userName" id="userName" placeholder=" Enter your Name/ID">
+			<input type="text" name="userName" id="userName" placeholder=" Enter your name / ID">
 			<button onclick="registerUser();">Register</button>
 		</div>
 
@@ -32,10 +35,29 @@
 		</div>
 	</div>
 	<nav class="nav">
-		<li><a onclick="redirect('/');"><button>Workspace</button></a></li>
-		<li><a onclick="redirect('/received');"><button active>Received</button></a></li>
-		<li><a onclick="redirect('/sent');"><button>Sent</button></a></li>
+		<li><a onclick="redirect('/');"><button active>Workspace</button></a></li>
+		<li><a onclick="redirect('/sent');"><button>Send</button></a></li>
+		<li><a onclick="redirect('/history');"><button>History</button></a></li>
 	</nav>
+
+	<p id="test"></p>
+
+	<script>
+		function print(data){
+			document.getElementById("test").innerHTML = data;
+		}
+		
+		fetch(window.location+"get-history")
+			.then((data)=>data.body)
+			.then((data)=>{
+				data.getReader().read().then(({done,value})=>{
+					value = new TextDecoder().decode(value);
+					console.log(value);
+					console.log(JSON.parse(value));
+					print(value);
+				})
+			});
+	</script>
 
 	<!-- PAGE SPECIFIC SCRIPTS-->
 </body>

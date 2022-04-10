@@ -1,2 +1,1 @@
-Log [#0] from ***.***.***.***: [./db/FileExample.txt] [FileExample.txt] [15/3/2021, 14:33:17:152]
-
+{"logs":[{"id":"s4eyB5GyBBYwCA58AAAF-vTqMGiumRyawjALSAAAD","from":"s4eyB5GyBBYwCA58AAAF","path":"./db/github-recovery-codes.txt","filename":"github-recovery-codes.txt","time":"10/4/2022, 23:46:54:28"},{"id":"s4eyB5GyBBYwCA58AAAF-vTqMGiumRyawjALSAAAD","from":"s4eyB5GyBBYwCA58AAAF","path":"./db/github-recovery-codes.txt","filename":"github-recovery-codes.txt","time":"10/4/2022, 23:47:0:275"},{"id":"s4eyB5GyBBYwCA58AAAF-vTqMGiumRyawjALSAAAD","from":"s4eyB5GyBBYwCA58AAAF","path":"./db/vs_code_inst.deb","filename":"vs_code_inst.deb","time":"10/4/2022, 23:48:5:335"},0]}

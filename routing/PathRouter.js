@@ -31,6 +31,11 @@ const PathRouter = function(saveFile, saveLogData, rootPath){
         res.sendFile(rootPath+'/client/received.html');
     });
 
+    app.get('/history', function(req, res, next){
+        console.log(`Sending response to the user [${requestIp.getClientIp(req)}]...`);
+        res.sendFile(rootPath+'/client/history.html');
+    });
+
     app.get('/sent', function(req, res, next){
         console.log(`Sending response to the user [${requestIp.getClientIp(req)}]...`);
         res.sendFile(rootPath+'/client/sent.html');
@@ -54,6 +59,10 @@ const PathRouter = function(saveFile, saveLogData, rootPath){
         }
         
         res.redirect('/');
+    });
+
+    app.get("/get-history", function(req, res){
+        fs.createReadStream(path.join(rootPath,"/db/logs/log_history.dat")).pipe(res);
     });
 
     return this.app;
