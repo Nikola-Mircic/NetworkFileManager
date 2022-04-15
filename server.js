@@ -21,7 +21,6 @@ const LogSystem = require("./logsystem.js");
 const Log = new LogSystem();
 const LOG_PATH = __dirname+"/db/logs/log_history.dat";
 
-const default_ip = findValue("-default-ip");
 const default_addr_name = findValue("-default-addr-name");
 const default_port = findValue("-default-port");
 
@@ -35,19 +34,17 @@ if(default_port !== ""){
 if(default_ip !== ""){
 	IP = default_ip;
 
-	server.listen(PORT,IP,()=>{
-		console.log("Server started on http://"+IP+":"+PORT);
-	});
+	server.listen(PORT, ()=>{});
+
 	IORouter.getRouter({save_files:save_files, write_log:write_log}).listen(io, saveFile, saveLogData);
 }else if(default_addr_name !== ""){
 	IP = available_adresses[default_addr_name][0];
 
-	server.listen(PORT,IP,()=>{
-		console.log("Server started on http://"+IP+":"+PORT);
-	});
+	server.listen(PORT, ()=>{});
+
 	IORouter.getRouter({save_files:save_files, write_log:write_log}).listen(io, saveFile, saveLogData);
 }else{
-	inputUserAddress();
+	server.listen(PORT, ()=>{});
 }
 
 
