@@ -13,7 +13,7 @@ const { networkInterfaces } = require('os');
 const server = require('http').createServer(app);
 const io = socketIO(server, {});
 
-var PORT = process.env.PORT || 80;
+var PORT = process.env.PORT || 8080;
 var available_adresses = getLocalAddressList();
 var IP = "localhost";
 
@@ -21,6 +21,7 @@ const LogSystem = require("./logsystem.js");
 const Log = new LogSystem();
 const LOG_PATH = __dirname+"/db/logs/log_history.dat";
 
+const default_ip = "";
 const default_addr_name = findValue("-default-addr-name");
 const default_port = findValue("-default-port");
 
@@ -38,7 +39,7 @@ if(default_ip !== ""){
 
 	IORouter.getRouter({save_files:save_files, write_log:write_log}).listen(io, saveFile, saveLogData);
 }else if(default_addr_name !== ""){
-	IP = available_adresses[default_addr_name][0];
+	/*IP = available_adresses[default_addr_name][0];*/
 
 	server.listen(PORT, ()=>{});
 
