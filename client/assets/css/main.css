@@ -151,12 +151,14 @@ button:hover {
 	border-style: solid;
 	border-color:  rgba(16, 14, 54, 0.9);
 	width: 100%;
+	height: 40px;
 	min-width: 200px;
 	font-size: 1.5rem;
 }
 
 .nav li button:hover{
 	margin-top: -10px;
+	height: 50px;
 	border-width: 2px 1px 2px 1px;
 	border-style: solid;
 	border-color:  rgba(16, 14, 54, 0.9);
