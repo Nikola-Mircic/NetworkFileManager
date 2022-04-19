@@ -27,6 +27,7 @@ $(".headerContainer").on('click', ()=>{
     var head = $("head");
     var link = $("<link rel='stylesheet' type='text/css' href='./assets/css/index.css'>");
     head.append(link);
+    updateUser(window.sessionStorage.getItem("username"));
 })();
 
 function toggleEntryList(path){
