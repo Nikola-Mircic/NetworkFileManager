@@ -22,7 +22,7 @@
 			<h1 id="headerText">Network file manager</h1>
 		</div>
 		<div id="userIpAddr" class="headerContainer" style="display: none;">
-			<h6>Your IPv4: <span id="ipv4">192.168.1.9</span></h6>
+			<h6>Your IPv4: <span id="ipv4">undefined</span></h6>
 		</div>
 		<div id="register" class="profileField">
 			<input type="text" name="userName" id="userName" placeholder=" Enter your name / ID">
@@ -34,10 +34,11 @@
 			<button onclick="changeUser();">Change</button>
 		</div>
 	</div>
+
 	<nav class="nav">
-		<li><a onclick="redirect('/');"><button>Workspace</button></a></li>
-		<li><a onclick="redirect('/sent');"><button active>Send</button></a></li>
-		<li><a onclick="redirect('/history');"><button>History</button></a></li>
+		<li><a onclick="redirect('/');"><button><i class="fa-regular fa-pen-to-square"></i> Workspace</button></a></li>
+		<li><a onclick="redirect('/sent');"><button active><i class="fa-solid fa-paper-plane"></i> Send</i></button></a></li>
+		<li><a onclick="redirect('/history');"><button><i class="fa-solid fa-clock-rotate-left"></i> History</button></a></li>
 	</nav>
 	
 	<div id="users">
@@ -46,5 +47,6 @@
 
 	<!-- PAGE SPECIFIC SCRIPTS-->
 	<script id="pageScript" type="text/javascript" src="./assets/js/sent.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </body>
 </html>
