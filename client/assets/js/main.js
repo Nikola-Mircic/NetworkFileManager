@@ -68,7 +68,7 @@ var workspaceFiles =  Object.assign({}, DirectoryStruct); // Directory where use
 var sentFiles =  Object.assign({}, DirectoryStruct); // Directory where sent files and directories are stored
 var receivedFiles =  Object.assign({}, DirectoryStruct); // Directory where received files and directories are stored
 
-const chunkSize = 400000;
+const chunkSize = 40000;
 
 function redirect(path){
 	console.log(window.location);

@@ -26,6 +26,19 @@ var onUsersUpdate=()=>{
     })
 }
 
+function sendToServer(){
+    var package = new FormData();
+
+    extractFiles(workspaceFiles).forEach((file)=>{
+        package.append('file', file.original);
+    });
+
+    fetch('/',{
+        method:'POST',
+        body: package
+    }).then(() => alert("Data is sent"));
+}
+
 (function(){
     var head = $("head");
     var link = $("<link rel='stylesheet' type='text/css' href='./assets/css/sent.css'>");
