@@ -4,7 +4,7 @@
     width: 90%;
     min-height: 30px;
     padding: 2px;
-    margin: 20px auto;
+    margin: 10px auto;
     background-color: rgba(255, 255, 255, 0.438);
 }
 
@@ -22,4 +22,21 @@
 	background-color: rgb(15, 53, 124);
     padding-top: 0.5em;
     padding-left: 1em;
+}
+
+.option{
+    display: block;
+    width: 90%;
+    margin: 20px auto auto auto;
+    font-size: 1.5rem;
+    text-align: left;
+} 
+
+#srvr-btn{
+    display: block;
+    width: 50%;
+    height: 1.5em;
+    font-size: 2em;
+    margin-top: 10px;
+    margin-left: 5%;
 }

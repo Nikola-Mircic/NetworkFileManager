@@ -40,9 +40,15 @@
 		<li><a onclick="redirect('/sent');"><button active><i class="fa-solid fa-paper-plane"></i> Send</i></button></a></li>
 		<li><a onclick="redirect('/history');"><button><i class="fa-solid fa-clock-rotate-left"></i> History</button></a></li>
 	</nav>
+
+	<h3 class="option">Send to the server: </h3>
+
+	<button id="srvr-btn" onclick="sendToServer()"></button>
+
+	<h3 class="option">or <br> Send to an user: </h3>
 	
 	<div id="users">
-
+		
 	</div>
 
 	<!-- PAGE SPECIFIC SCRIPTS-->
