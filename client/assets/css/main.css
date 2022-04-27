@@ -12,9 +12,6 @@ body{
 	box-sizing: border-box;
 }
 
-/*input[type="button"]:hover {
-	background-color: rgb(150,170,205);
-}*/
 
 #header {
 	-webkit-appearance: none;
@@ -156,9 +153,12 @@ button:hover {
 	font-size: 1.5rem;
 }
 
-.nav li button:hover{
-	margin-top: -10px;
-	height: 50px;
+button:hover{
+	/*margin-top: -10px;
+	height: 50px;*/
+	transform: scale(1.05, 1.1);
+	transition-duration: 0.2s;
+
 	border-width: 2px 1px 2px 1px;
 	border-style: solid;
 	border-color:  rgba(16, 14, 54, 0.9);
@@ -231,15 +231,6 @@ button:hover {
 	width: 40%;
 	height: 50px;
 	text-align: center;
-}
-
-.profileField button.button, input[type="button"], input[type="submit"].formFileInput {
-	transition-duration: 1s;
-  	cursor: pointer;
-}
-
-.profileField button.button:hover, input[type="button"]:hover, input[type="submit"]:hover {
-	background-color: rgb(150,170,205);
 }
 
 i{

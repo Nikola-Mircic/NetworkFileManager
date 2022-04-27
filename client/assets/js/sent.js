@@ -30,6 +30,10 @@ var onUsersUpdate=()=>{
     var head = $("head");
     var link = $("<link rel='stylesheet' type='text/css' href='./assets/css/sent.css'>");
     head.append(link);
+
+    //Update server address on SEND page
+    $("#srvr-btn").html(`${window.location.host}`);
+
     onUsersUpdate();
     updateUser(window.sessionStorage.getItem("username"));
 })();
