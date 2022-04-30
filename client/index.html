@@ -42,6 +42,15 @@
 		<li><a onclick="redirect('/history');"><button><i class="fa-solid fa-clock-rotate-left"></i> History</button></a></li>
 	</nav>
 
+	<div class="progress-container">
+		<h3 class="txt">Current data transfer:</h3>
+		<h3 id="status" class="status" style="display: none;"></h3>
+		<h3 id="no-transfer" class="no-transfer" >There is no current transfer</h3>
+		<div id="progress" class="progress" style="display: none;">
+			<div id="progress-line" class="progress-line" width="50%"></div>
+		</div>
+	</div>
+
 	<div id="workspace">
 		<div ondrop="onFileDrop(event);" ondragover="onDragOver(event);">
 			<div id="dropField">

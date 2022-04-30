@@ -71,21 +71,11 @@ var receivedFiles =  Object.assign({}, DirectoryStruct); // Directory where rece
 const chunkSize = 40000;
 
 function redirect(path){
-	console.log(window.location);
 	fetch(window.location.origin+path).then((data)=>{
 		data.text().then((page)=>{
-					console.log(path);
-					$("#pageScript").remove();
-					$("head").append(getPageSpecificScripts(page));
 					$("body").html(getBody(page));
 				});
 	});
-}
-
-function getPageSpecificScripts(page){
-	const commnet = "<!-- PAGE SPECIFIC SCRIPTS-->";
-	const commentIndex = page.indexOf(commnet)+commnet.length;
-	return page.substring(commentIndex, page.indexOf("</body>"));
 }
 
 function getBody(page){
@@ -177,23 +167,26 @@ socket.on('removeUser', function(data){
 
 socket.on("start-transfer",function(data){
 	receivedSize = 0;
-	console.log(data);
 	packageSize = data.info.size;
 
 	data.info.files.forEach((file)=>{
-		if(receivedFiles[""+file.name])
-			console.log("Rewriting file");
 		receivedFiles[""+file.name] = {
 			data: new Uint8Array(),
 			type: "",
 			fileSize: file.fileSize
 		}
-	})
+	});
+
+	showProgressBar();
 })
 
 socket.on('data',function(data){
-	console.log(data);
 	var fileName = data.file.name;
+	
+	receivedSize += data.file.data.byteLength;
+
+	updateReceivingBar();
+
 	if(receivedFiles[fileName]){
 		var concat = new Uint8Array(receivedFiles[fileName].data.byteLength + data.file.data.byteLength);
 		concat.set(new Uint8Array(receivedFiles[fileName].data));
@@ -202,15 +195,12 @@ socket.on('data',function(data){
 		receivedFiles[fileName].data = concat;
 
 		if(receivedFiles[fileName].data.byteLength == receivedFiles[fileName].fileSize){
-			console.log(`Making new ${fileName} file...`);
 			var newOriginal = new File([receivedFiles[fileName].data], fileName, {type:data.file.type});
 			var newFile = Object.assign({}, FileStruct);
 			newFile.original = newOriginal
 			newFile.path = data.file.path;
 
 			insertFile(newFile);
-
-			console.log(newFile);
 		}
 
 		writeLoadedFiles(workspaceFiles, filesListDiv);
@@ -228,7 +218,6 @@ socket.on('data',function(data){
 
 function insertFile(file){
 	var pathSteps = file.path.split("/");
-	console.log(pathSteps);
 	var pathPassed = "/";
 
     var dir = workspaceFiles;
@@ -251,10 +240,6 @@ function insertFile(file){
 }
 
 socket.on('request data',async function(data){
-	console.log("==================================");
-	console.log('Requested Data');
-	console.log('data');
-	console.log("==================================");
 	var fileToSent = null;
 	for(let i=0; i<selectedFiles.length; ++i){
 		if((selectedFiles[i].chunks == 0) || 
@@ -268,7 +253,9 @@ socket.on('request data',async function(data){
 	if(fileToSent == null){
 		socket.emit("transfer end",data);
 		alert("Data is sent!");
-		setTimeout(function() {$(".progress").hide();}, 1000);
+		setTimeout(function(){
+			removeProgressBar();
+		}, 1000);
 		return;
 	}
 
@@ -295,19 +282,21 @@ socket.on('request data',async function(data){
 			data: chunk
 		}
 	});
+
+	updateSendingBar();
 });
 
 socket.on("transfer end",function(data){
-	setTimeout(function() {$(".progress").hide();}, 1000);
 	receivedFiles = {};
+	setTimeout(function(){
+		removeProgressBar();
+	}, 1000);
 });
 
 async function sendToUser(name, id){
 	var files = extractFiles(workspaceFiles);
-	console.log(files);
 	
 	for(let i=0;i<files.length;++i){
-		console.log("Processing "+i+"...");
 		selectedFiles.push(files[i]);
 	}
 
@@ -315,7 +304,6 @@ async function sendToUser(name, id){
 	packageSize = 0;
 	selectedFiles.forEach(function(item, idx){
 		packageSize += item.size();
-		console.log(item);
 	});
 
 	socket.emit("start-transfer",{
@@ -331,6 +319,8 @@ async function sendToUser(name, id){
 								})
 		}
 	});
+
+	showProgressBar();
 
 	var chunk = -1;
 	if(selectedFiles[0].size() < chunkSize){
@@ -357,10 +347,7 @@ async function sendToUser(name, id){
 	sentSize += chunk.byteLength;
 	let percent = Math.round((sentSize*100)/packageSize);
 
-	$(".progress").show();
-	$(".progress-done").css("width", percent+'%');
-	$(".progress-done").css("opacity", "1");
-	$(".progress-done").html(percent+'%'); 
+	updateSendingBar();
 };
 
 function extractFiles(dir){
@@ -418,28 +405,6 @@ function updateUser(username){
 
 updateUser(window.sessionStorage.getItem("username"));
 
-/*function showUsers(){
-	if(activeUsers.length > 0){
-		$("#users").show();
-	}else{
-		$("#users").hide();
-	}
-
-	$("#users").empty();
-
-	if(activeUsers.length > 2){
-		$("users").css("height", `${(150+(activeUsers.length-2)*60)}px`);
-	}
-
-	var data = "<h3>Send to:</h3>\n";
-	activeUsers.forEach(function(val, idx){
-		let newButton = `<button class="button" onclick="sendToUser('${val.name}', '${val.id}');">${val.name}</button>\n`;
-		data += newButton;
-	});
-
-	$("#users").html(data);
-}*/
-
 function extractFileName(fullPath){
 	if (fullPath) {
 	    var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
@@ -451,10 +416,38 @@ function extractFileName(fullPath){
 	}
 }
 
+function showProgressBar(){
+	$("#no-transfer").hide();
+	$("#progress").show();
+	$("#status").show();
+}
+
+function updateSendingBar(){
+	if($("#progress").css('display') != 'block') return;
+
+	$("#progress-line").width( $("#progress").width() * (sentSize/packageSize) );
+	$("#status").html(`${sentSize}/${packageSize}`);
+}
+
+async function updateReceivingBar(){
+	if($("#progress").css('display') != 'block') return;
+
+	$("#progress-line").width( $("#progress").width() * (receivedSize/packageSize) );
+	$("#status").html(`${receivedSize}/${packageSize}`);
+}
+
+function removeProgressBar(){
+	$("#no-transfer").css("display", "block");
+
+	$("#progress-line").width(0);
+	$("#progress").css("display", "none");
+
+	$("#status").html("");
+	$("#status").css("display", "none");
+}
+
 function addFileToList(file){
 	var htmlData = $("#data ol").html();
-	console.log(`Adding ${file.name} to the page...`);
-	console.log(file);
 
 	let blob = new Blob([file.data], {type: file.type});
 	let url = window.URL.createObjectURL(blob);

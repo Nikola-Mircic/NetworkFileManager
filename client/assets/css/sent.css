@@ -26,17 +26,54 @@
 
 .option{
     display: block;
+    position: relative;
     width: 90%;
     margin: 20px auto auto auto;
     font-size: 1.5rem;
     text-align: left;
 } 
 
-#srvr-btn{
-    display: block;
-    width: 50%;
-    height: 1.5em;
+#srvr-btn {
+    display: inline-block;
+    width: 43%;
+    min-width: 400px;
+    height: 4rem;
     font-size: 2em;
     margin-top: 10px;
     margin-left: 5%;
 }
+
+.progress-container {
+    float: right;
+    width: 43%;
+    min-width: 400px;
+    height: 4rem;
+
+    margin-top: 10px;
+    margin-right: 5%;
+    padding: 0.5rem;
+
+    border-radius: 5px;
+
+    box-sizing: border-box;
+    background-color: rgba(255, 255, 255, 0.438);
+}
+
+@media screen and (max-width: 1000px) {
+    #srvr-btn {
+        display: block;
+        position: relative;
+        width: 90%;
+        height: 1.5em;
+        font-size: 2em;
+        margin: 10px auto;
+    }
+    
+    .progress-container {
+        display: block;
+        position: relative;
+        width: 90%;
+        box-sizing: border-box;
+    }
+}
+
