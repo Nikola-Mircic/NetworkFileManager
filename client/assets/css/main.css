@@ -235,6 +235,7 @@ button:hover{
 
 i{
 	transform: scale(0.8, 0.8);
+
 }
 
 .progress-container {
@@ -289,3 +290,4 @@ i{
     margin-top: 1.5rem;
     color: #0000bb;
 }
+
