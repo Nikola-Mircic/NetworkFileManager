@@ -24,9 +24,17 @@ $(".headerContainer").on('click', ()=>{
 });
 
 (function(){
-    var head = $("head");
-    var link = $("<link rel='stylesheet' type='text/css' href='./assets/css/index.css'>");
+    var head = document.getElementsByTagName("head")[0];
+    var link = document.createElement("link");
+    link.setAttribute("rel", "stylesheet");
+    link.setAttribute("type", "text/css");
+    link.setAttribute("href", "./assets/css/index.css");
+    link.setAttribute("name", "css");
+
+    document.getElementsByName("css").forEach((node)=>node.remove());
+
     head.append(link);
+
     updateUser(window.sessionStorage.getItem("username"));
 })();
 

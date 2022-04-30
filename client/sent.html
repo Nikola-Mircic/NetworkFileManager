@@ -5,16 +5,15 @@
 	<link rel="stylesheet" type="text/css" href="./assets/css/main.css">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
-	<script type="text/javascript" src="./assets/js/jquery.min.js"></script>
-	<script type="text/javascript" src="./assets/js/jszip.min.js"></script>
-	<script type="text/javascript" src="./assets/js/FileSaver.min.js"></script>
+	<script type="text/javascript" src="/socket.io/socket.io.js"  defer></script>
+	<script type="text/javascript" src="./assets/js/jquery.min.js" defer></script>
+	<script type="text/javascript" src="./assets/js/jszip.min.js" defer></script>
+	<script type="text/javascript" src="./assets/js/FileSaver.min.js" defer></script>
 	
-	<script>
+	<script defer>
 		const socket = io();
 	</script>
-
-	<script id="pageScript" type="text/javascript" src="./assets/js/main.js"></script>
+	<script id="pageScript" type="text/javascript" src="./assets/js/main.js" defer></script>
 </head>
 <body>
 	<div id="header">
@@ -45,6 +44,16 @@
 
 	<button id="srvr-btn" onclick="sendToServer()"></button>
 
+	<div class="progress-container">
+		<h3 class="txt">Current data transfer:</h3>
+		<h3 id="status" class="status" style="display: none;"></h3>
+		<h3 id="no-transfer" class="no-transfer" >There is no current transfer</h3>
+		<div id="progress" class="progress" style="display: none;">
+			<div id="progress-line" class="progress-line" width="50%"></div>
+		</div>
+	</div>
+	<br>
+
 	<h3 class="option">or <br> Send to an user: </h3>
 	
 	<div id="users">
@@ -52,7 +61,7 @@
 	</div>
 
 	<!-- PAGE SPECIFIC SCRIPTS-->
-	<script id="pageScript" type="text/javascript" src="./assets/js/sent.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<script id="pageScript" type="text/javascript" src="./assets/js/sent.js" defer></script>
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js" defer></script>
 </body>
 </html>

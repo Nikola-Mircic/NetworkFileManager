@@ -40,8 +40,16 @@ function sendToServer(){
 }
 
 (function(){
-    var head = $("head");
-    var link = $("<link rel='stylesheet' type='text/css' href='./assets/css/sent.css'>");
+    var head = document.getElementsByTagName("head")[0];
+
+    document.getElementsByName("css").forEach((node)=>node.remove());
+
+    var link = document.createElement("link");
+    link.setAttribute("rel", "stylesheet");
+    link.setAttribute("type", "text/css");
+    link.setAttribute("href", "./assets/css/sent.css");
+    link.setAttribute("name", "css");
+
     head.append(link);
 
     //Update server address on SEND page
