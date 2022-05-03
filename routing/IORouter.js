@@ -4,11 +4,8 @@ var IORouter = function(){
     
     this.getRouter = (setup)=>{
         var newRouter = new IORouter();
-        console.log(setup);
         newRouter.save_files = setup.save_files;
         newRouter.write_log = setup.write_log;
-        console.log(newRouter.save_files +" "+ setup.save_files);
-        console.log(newRouter.write_log +" "+ setup.write_log);
         return newRouter;
     };
 
@@ -21,18 +18,25 @@ var IORouter = function(){
         const LOG_PATH = __dirname+"/db/logs/log_history.dat";
 
         io.on('connection', (socket)=>{
-            console.log("Sending data to new user");
+            var user = {
+                'id': socket.id,
+                'address': socket.client.conn.remoteAddress
+            };
+
+            regUser[regUser.length] = user;
+
             regUser.forEach((item, index)=>{
-                socket.emit('newUser', item);
+                if(item.name)
+                    socket.emit('newUser', item);
             });
         
             socket.on('register',(data)=>{
-                var user = {
-                    'name': data.name,
-                    'id': socket.id
-                };
+                var user = regUser.find((user)=>{
+                    return user.id === socket.id;
+                });
+
+                user.name = data.name;
         
-                regUser[regUser.length] = user;
                 socket.broadcast.emit('newUser', user);
             });
         
@@ -59,13 +63,25 @@ var IORouter = function(){
             socket.on("transfer end",(data)=>{
                 var date = new Date();
                 console.log("Transfer ended! Write log: "+this.write_log);
+                console.log(data);
+
+                console.log(regUser);
+
+                var sender = regUser.find((user)=>{
+                    return user.id === data.from;
+                }).address;
+
+                var receiver = regUser.find((user)=>{
+                    return user.id === data.receiver;
+                }).address;
+
                 if(this.write_log){
-                    saveLogData(`${data.from}-${data.receiver}`,
+                    saveLogData(`${sender}-${receiver}`,
                             data.file,
-                            data.from);
+                            sender);
                 }
                 
-                console.log(`Transfer [${data.from} -> ${data.receiver}] (${Log.getTime()})[~${date.getTime()-startTime} ms] completed!!`);
+                console.log(`Transfer [${sender} -> ${receiver}] (${Log.getTime()})[~${date.getTime()-startTime} ms] completed!!`);
         
                 io.to(data.receiver).emit("transfer end",data);
             });
