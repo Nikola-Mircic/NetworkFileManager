@@ -1,5 +1,3 @@
-//const socket = require("socket.io-client/lib/socket");
-
 var activeUsers = [];
 var receivedFiles = {};
 var selectedFiles = [];
@@ -81,6 +79,18 @@ function redirect(path){
 function getBody(page){
 	return page.substring(page.indexOf("<body>"),page.indexOf("</body>"));
 }
+
+window.onload = ()=>{
+	var username = window.sessionStorage.getItem('username');
+	if(username && username !== 'null'){
+		if(socket.disconnected)
+			socket.connect();
+
+		socket.emit('register',{
+			'name':username
+		});
+	}
+};
 
 function writeLoadedFiles(directory, list){
     list.empty();
@@ -381,7 +391,7 @@ function registerUser(){
 function changeUser(){
 	socket.disconnect();
 
-	let name = $("#register input").val();
+	window.sessionStorage.clear();
 
 	$("#register").show();
 	$("#register input").val("");
