@@ -90,7 +90,10 @@ function inputUserAddress(){
 	});
 
 	userInCLI.question("Select one of above networks to run your program on (to run only on your computer type 'localhost' ):", function(name) {
-		if(name === 'localhost') return;
+		if(name === 'localhost'){
+			userInCLI.close();
+			return;
+		}
 	
 		let selection = available_adresses[name];
 	
