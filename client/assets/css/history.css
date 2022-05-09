@@ -1,0 +1,7 @@
+#history{
+    display: block;
+    position: relative;
+    width: 80%;
+    height: fit-content;
+    margin: 10px auto;
+}

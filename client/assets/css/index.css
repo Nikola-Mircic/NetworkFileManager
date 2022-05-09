@@ -11,7 +11,7 @@
     border-radius: 15px;
     background-color: rgba(255, 255, 255, 0.438);
     width: 100%;
-    height: 40vh;
+    height: fit-content;
 }
 
 #dropHints{
@@ -19,9 +19,7 @@
     position: relative;
     width: 70%;
     height: 70%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    margin: 15px auto;
     font-size: 1.5rem;
 }
 
@@ -32,14 +30,13 @@
 
 #dropHints button{
     display: block;
-    position: absolute;
+    position: relative;
     width: fit-content;
     max-width: 70%;
     height: fit-content;
     padding: 0.4em 1em 0.4em 1em;
-    left: 50%;
-    bottom: 15%;
-    transform: translateX(-50%);
+    
+    margin: 20px auto;
     font-size: 100%;
 }
 
@@ -108,13 +105,6 @@
     max-width: 90%;
 }
 
-/*#fileStats .fileControl{
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    min-width: 50%;
-}*/
-
 #fileStats div{
     display: flex;
 }
@@ -135,10 +125,6 @@
     background-color: rgba(0, 0, 0, 0);
     border: none;
 }
-
-/*#fileStats button:hover{
-    
-}*/
 
 #fileStats>p, .folderStats>p{
     word-break: break-all;
