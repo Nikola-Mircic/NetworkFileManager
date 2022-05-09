@@ -251,6 +251,7 @@ function insertFile(file){
 
 socket.on('request data',async function(data){
 	var fileToSent = null;
+	
 	for(let i=0; i<selectedFiles.length; ++i){
 		if((selectedFiles[i].chunks == 0) || 
 		   (selectedFiles[i].chunks*chunkSize < selectedFiles[i].size())){
@@ -280,17 +281,23 @@ socket.on('request data',async function(data){
 	$(".progress-done").css("opacity", "1");
 	$(".progress-done").html(percent+'%'); 
 
-	socket.emit('data',{
-		from: socket.id,
-		receiver: data.receiver,
-		receiverName: data.receiverName,
-		file: {
+	var fileData = {
 			name: fileToSent.name(),
 			type: fileToSent.type(),
 			size: fileToSent.size(),
 			path: fileToSent.path,
 			data: chunk
 		}
+
+	if(chunkEnd === fileToSent.size()){
+		fileData.finished = true;
+	}
+
+	socket.emit('data',{
+		from: socket.id,
+		receiver: data.receiver,
+		receiverName: data.receiverName,
+		file: fileData
 	});
 
 	updateSendingBar();
@@ -334,28 +341,33 @@ async function sendToUser(name, id){
 
 	var chunk = -1;
 	if(selectedFiles[0].size() < chunkSize){
-		chunk = await selectedFiles[0].data();
+		chunk = await selectedFiles[0].data();	
 	}else{
 		chunk = await selectedFiles[0].dataPart(0,chunkSize);
 	}
 
 	selectedFiles[0].chunks++;
 
-	socket.emit('data',{
-		from: socket.id,
-		receiver: id,
-		receiverName: name,
-		file: {
+	var fileData = {
 			name: selectedFiles[0].name(),
 			type: selectedFiles[0].type(),
 			size: selectedFiles[0].size(),
 			path: selectedFiles[0].path,
 			data: chunk
-		}
+		};
+
+	if(selectedFiles[0].size() < chunkSize){
+		fileData.finished = true;	
+	}
+
+	socket.emit('data',{
+		from: socket.id,
+		receiver: id,
+		receiverName: name,
+		file: fileData
 	});
 
 	sentSize += chunk.byteLength;
-	let percent = Math.round((sentSize*100)/packageSize);
 
 	updateSendingBar();
 };

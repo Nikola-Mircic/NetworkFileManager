@@ -44,9 +44,6 @@ class LogSystem{
 
 		logs = logs.substring(0, logs.length-3);
 
-		console.log(logs);
-		console.log(JSON.stringify(logData));
-
 		logData = Buffer.from(logs+JSON.stringify(logData)+",0]}");
 
 		fs.writeFile(path,logData,(err)=>{
