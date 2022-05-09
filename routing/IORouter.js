@@ -57,15 +57,25 @@ var IORouter = function(){
                         data.from,
                         transport=true);
                 }
+                if(data.file.finished && this.write_log){
+                    var sender = regUser.find((user)=>{
+                        return user.id === data.from;
+                    }).address;
+    
+                    var receiver = regUser.find((user)=>{
+                        return user.id === data.receiver;
+                    }).address;
+
+                    saveLogData(`${sender}-${receiver}`,
+                            data.file,
+                            sender);
+                }
                 io.to(data.receiver).emit('data',data);
             });
         
             socket.on("transfer end",(data)=>{
                 var date = new Date();
                 console.log("Transfer ended! Write log: "+this.write_log);
-                console.log(data);
-
-                console.log(regUser);
 
                 var sender = regUser.find((user)=>{
                     return user.id === data.from;
@@ -74,12 +84,12 @@ var IORouter = function(){
                 var receiver = regUser.find((user)=>{
                     return user.id === data.receiver;
                 }).address;
-
-                if(this.write_log){
+                
+                /*if(this.write_log){
                     saveLogData(`${sender}-${receiver}`,
                             data.file,
                             sender);
-                }
+                }*/
                 
                 console.log(`Transfer [${sender} -> ${receiver}] (${Log.getTime()})[~${date.getTime()-startTime} ms] completed!!`);
         
