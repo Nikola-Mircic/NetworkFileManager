@@ -235,7 +235,7 @@ function insertFile(file){
     for(let i=1; i<pathSteps.length-1; ++i){
 		pathPassed += pathSteps[i];
 		if(!dir.directories[pathSteps[i]]){
-			console.log(`Folder "${pathSteps[i]}" doesn't exists`);
+			console.log(`Folder "${pathSteps[i]}" doesn't exists! \n Creating in process...`);
 			var newDir = Object.assign({}, DirectoryStruct);
 			newDir.directories = {};
 			newDir.path = pathPassed;
@@ -251,7 +251,7 @@ function insertFile(file){
 
 socket.on('request data',async function(data){
 	var fileToSent = null;
-	
+
 	for(let i=0; i<selectedFiles.length; ++i){
 		if((selectedFiles[i].chunks == 0) || 
 		   (selectedFiles[i].chunks*chunkSize < selectedFiles[i].size())){
@@ -308,6 +308,15 @@ socket.on("transfer end",function(data){
 	setTimeout(function(){
 		removeProgressBar();
 	}, 1000);
+	if(workspaceFiles && ( Object.keys(workspaceFiles.directories).length>0 || workspaceFiles.files.length>0)){
+		if(!$("#dropField") || !$("#selection_view")){
+			return;
+		}
+
+		$("#dropField").hide();
+		$("#selection_view").show();
+		writeLoadedFiles(workspaceFiles, filesListDiv);
+	}
 });
 
 async function sendToUser(name, id){
