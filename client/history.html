@@ -4,8 +4,7 @@
 	<title>Network file manager</title>
 
 	<link rel="stylesheet" type="text/css" href="./assets/css/main.css">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, target-densityDpi=device-dpi">
 	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
 	<script type="text/javascript" src="./assets/js/jquery.min.js"></script>
 	<script type="text/javascript" src="./assets/js/jszip.min.js"></script>
@@ -41,11 +40,13 @@
 		<li><a onclick="redirect('/history');"><button active><i class="fa-solid fa-clock-rotate-left"></i> History</button></a></li>
 	</nav>
 
-	<p id="test"></p>
+	<section id="history">
+
+	</section>
 
 	<script>
 		function print(data){
-			document.getElementById("test").innerHTML = data;
+			document.getElementById("history").innerHTML = data;
 		}
 		
 		fetch(window.location+"get-history")
