@@ -1,7 +1,49 @@
 #history{
     display: block;
     position: relative;
+
+    overflow: hidden;
+
     width: 80%;
     height: fit-content;
+    margin: 10px auto
+}
+
+
+.file_data{
+    display: block;
+    position: relative;
     margin: 10px auto;
+
+    width: 100%;
+    height: fit-content;
+
+    border-width: 2px;
+    border-style: solid;
+    border-color: rgba(16, 14, 54, 0.9);
+    border-radius: 0.1rem;
+
+    box-sizing: border-box;
+}
+
+.file_data p{
+    display: flex;
+    justify-content: space-between;
+    padding: .5rem;
+    align-items: center;
+    background-color: rgba(33, 61, 187, 0.486);
+
+    font-size: 1.25rem;
+}
+
+.file_stats p:nth-child(odd){
+    background-color: #aaaaaa55;
+}
+
+.file_stats{
+    display: none;
+}
+
+.file_stats[visible]{
+    display: block;
 }

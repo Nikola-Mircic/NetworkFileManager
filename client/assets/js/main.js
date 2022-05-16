@@ -394,7 +394,14 @@ function extractFiles(dir){
 	return dirFiles;
 }
 
+$("#register").on('submit', (e)=>{
+	console.log("Stoped...");
+	setTimeout(()=>{}, 1000);
+    e.preventDefault();
+});
+
 function registerUser(){
+	setTimeout(()=>{}, 1000);
 	if(socket.disconnected)
 		socket.connect();
 	let name = $("#register input").val();
@@ -488,4 +495,6 @@ function addFileToList(file){
 	$("#received").show();
 	$("#data ol").html(htmlData); 
 }
+
+
 
