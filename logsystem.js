@@ -18,18 +18,19 @@ class LogSystem{
 		return time;
 	}
 
-	async writeLog(fileName, filePath, clientIP, path, id, time, cb){
+	async writeLog(fileName, filePath, clientIP_send, clientIP_receive, path, id, time, cb){
 		let fs = require("fs");
 		console.log("Writing logs [#"+id+"] for: \n \t"+
-						"- Clent : " + clientIP + "\n\t" +
+						"- Clent 1 : " + clientIP_send + "\n\t" +
+						"- Clent 2 : " + clientIP_receive + "\n\t" +
 						"- File : " + fileName + "\n\t" +
 						"- In : " + filePath + "\n\t" +
 						"- Time : " + time );
 
-		//let logData = `Log [#${id}] from ${clientIP}: [${filePath}] [${fileName}] [${time}] \n`;
 		let logData = {
 			id: id,
-			from: clientIP,
+			from: clientIP_send,
+			to: clientIP_receive,
 			path: filePath,
 			filename: fileName,
 			time: time,

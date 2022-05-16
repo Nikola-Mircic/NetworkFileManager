@@ -63,13 +63,13 @@ function saveFile(fileID, file, sender, transport=false){
 	});
 };
 
-function saveLogData(fileID, file, sender){
+function saveLogData(fileID, file, sender, receiver){
 	let fileName = file.name;
 
 	let time = Log.getTime();
 	console.log(`Saved file : ${fileName} [${time}]`);
 
-	Log.writeLog(fileName, "./db/"+fileName, sender, LOG_PATH, fileID, time, (result)=>{
+	Log.writeLog(fileName, "./db/"+fileName, sender, receiver, LOG_PATH, fileID, time, (result)=>{
 		if(result){
 			console.log("Transport logged");
 		}else{

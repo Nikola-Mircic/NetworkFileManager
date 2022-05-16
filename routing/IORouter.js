@@ -68,7 +68,8 @@ var IORouter = function(){
 
                     saveLogData(`${sender}-${receiver}`,
                             data.file,
-                            sender);
+                            sender,
+                            receiver);
                 }
                 io.to(data.receiver).emit('data',data);
             });
