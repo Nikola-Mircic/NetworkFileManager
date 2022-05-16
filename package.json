@@ -4,7 +4,7 @@
   "description": "\"Node.JS application for transporting files trought the home network\"",
   "main": "server.js",
   "scripts": {
-    "start": "sudo nodemon --ignore ./db/ server.js -default-addr-name wlo1 -save-files false -write-log false",
+    "start": "sudo nodemon --ignore ./db/ server.js -default-addr-name wlo1 -save-files false -write-log true",
     "test": "start"
   },
   "author": "Nikola-Mircic",
