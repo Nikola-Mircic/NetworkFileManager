@@ -7,7 +7,6 @@ fetch(window.location.origin+'/get-user-ip').then((ip)=>{
 })
 
 $(".headerContainer").on('click', ()=>{
-    console.log("Clicked header!");
     $("#headerContainer").toggle();
     $("#userIpAddr").toggle();
 });
@@ -15,7 +14,6 @@ $(".headerContainer").on('click', ()=>{
 var onUsersUpdate=()=>{
     $("#users").empty();
     activeUsers.forEach(({name, id}, idx)=>{
-        console.log(`Name: ${name}, ID: ${id}, Index: ${idx}`);
         var newCard = $("<button class='user-card'></button>");
         newCard.append(`<h1>Name: ${name}</h1><br>`);
         newCard.append(`<p><b>ID:</b> ${id}</p><br>`);

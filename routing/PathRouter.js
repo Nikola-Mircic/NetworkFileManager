@@ -16,28 +16,24 @@ const PathRouter = function(saveFile, saveLogData, rootPath){
     }));
     
     app.use(bodyParser.urlencoded({extended: true}));
-    app.use(morgan('dev'));
+
     app.use(requestIp.mw());
     
     app.use('/assets',express.static(path.join(rootPath, '/client/assets')));
 
     app.get('/', function(req, res, next){
-        console.log(`Sending response to the user [${requestIp.getClientIp(req)}]...`);
         res.sendFile(rootPath+'/client/index.html');
     });
 
     app.get('/received', function(req, res, next){
-        console.log(`Sending response to the user [${requestIp.getClientIp(req)}]...`);
         res.sendFile(rootPath+'/client/received.html');
     });
 
     app.get('/history', function(req, res, next){
-        console.log(`Sending response to the user [${requestIp.getClientIp(req)}]...`);
         res.sendFile(rootPath+'/client/history.html');
     });
 
     app.get('/sent', function(req, res, next){
-        console.log(`Sending response to the user [${requestIp.getClientIp(req)}]...`);
         res.sendFile(rootPath+'/client/sent.html');
     });
 

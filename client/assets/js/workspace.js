@@ -291,17 +291,14 @@ async function downloadFolder(folderPath, e){
     }
     
     var zip = new JSZip();
-    console.log("Zipping ");
-    console.log(dir);
     var files = extractFiles(dir);
-    console.log(files);
+
     for(var fileIdx in files){
     	let file = files[fileIdx];
         let file_data = await file.data();
     	var blob = new Blob([file_data],
 							 {type: file.type()});
     	zip.file(file.path.substring(1), file.name(), blob);
-    	console.log(`Zipped : ${file.name()}`);
     }
 	
 	zip.generateAsync({type:"blob"})

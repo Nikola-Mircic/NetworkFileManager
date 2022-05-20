@@ -215,7 +215,6 @@ socket.on('data',function(data){
 
 		writeLoadedFiles(workspaceFiles, filesListDiv);
 	}else{
-		console.log(`Unexpected file found ${fileName} [${data.file.size} b]`);
 		receivedFiles[fileName] = Object.assign({}, data.file);
 	}
 
@@ -235,7 +234,6 @@ function insertFile(file){
     for(let i=1; i<pathSteps.length-1; ++i){
 		pathPassed += pathSteps[i];
 		if(!dir.directories[pathSteps[i]]){
-			console.log(`Folder "${pathSteps[i]}" doesn't exists! \n Creating in process...`);
 			var newDir = Object.assign({}, DirectoryStruct);
 			newDir.directories = {};
 			newDir.path = pathPassed;
@@ -395,7 +393,6 @@ function extractFiles(dir){
 }
 
 $("#register").on('submit', (e)=>{
-	console.log("Stoped...");
 	setTimeout(()=>{}, 1000);
     e.preventDefault();
 });
